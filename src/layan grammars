@@ -1,0 +1,27 @@
+statements:
+
+decl_stat: DATA_TYPE ID ('=' expression)?
+DATA_TYPE: 'int' | 'float' | 'bool' | 'string'
+ID: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
+NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
+
+method_declaration: 'function' ID '(' parameters ')' '{' statments '}'
+parameters: decl_stat (',' decl_stat)*
+
+class_declaration: 'class' ID '{'class_statments'}'
+class_statments: decl_stat | method_declaration
+
+object_declaration:Type ID '=' Type '(' parameters ')'
+parameters: decl_stat (',' decl_stat)*
+
+
+if_statment: 'if' '(' boolean_expression ')' '{' statments '}'
+ ('else' '{' statments '}')?
+
+while_statment: 'while' '(' boolean_expression ')' '{' statments '}'
+
+'for' '(' declaration_statament ';' boolean_expression; statment')' '{'stat'}'
+stat:statments
+statment: assignment_stat
+
+comments_stat: '/*' TEXT '*/'
