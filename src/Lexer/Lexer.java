@@ -3,17 +3,31 @@ package Lexer;
 import Tokens.Token;
 import Tokens.Tokens;
 
+import java.util.HashMap;
+
 // Recursive Descent Lexer LL(1).
 public class Lexer {
-    private String input; // Layan code.
+    private String input; // layan code.txt.
     private int index; // current input index.
     private char currentChar;
+    private HashMap<String, Token> keywords = new HashMap<String, Token>(); // represent the preserved
+    // key words of layan
 
     public Lexer(String text){
         input = text;
         index = 0;
         if(input.length() <= 0) throw new IllegalArgumentException("Invalid Layan Code");
         currentChar = input.charAt(index);
+        initKeywords();
+    }
+
+    private void initKeywords(){//map each keyword with it's token
+        keywords.put("function", new Token("function", Tokens.FUNCTION));
+        keywords.put("class", new Token("class", Tokens.CLASS));
+        keywords.put("if", new Token("if", Tokens.IF));
+        keywords.put("else", new Token("else", Tokens.ELSE));
+        keywords.put("while", new Token("while", Tokens.WHILE));
+        keywords.put("for", new Token("for", Tokens.FOR));
     }
 
     private void consume(){ // move the pointer to the next char in the input stream.
@@ -21,7 +35,12 @@ public class Lexer {
             currentChar = input.charAt(index);
             return;
         }
-        currentChar = (char)-1; // to know if we hit the end of the code.
+        currentChar = (char)-1; // to know if we hit the end of the code.txt.
+    }
+
+    private char peek(){
+        if((index + 1) >= input.length()) return ' ';
+        return input.charAt(index + 1);
     }
 
     private Token generateToken(String text, int type){
@@ -44,6 +63,26 @@ public class Lexer {
         while (isWhiteSpace(currentChar)) consume();
     }
 
+    private void skipComment(){
+        for(int i = index; i < input.length() - 1; i++){
+            consume();
+            consume();
+            if(input.substring(i, i + 2).compareTo("*/") >= 0) break;
+        }
+    }
+
+    private Token isKeyword(String name){
+        return keywords.get(name);
+    }
+
+    private void match(char c){
+        if(currentChar == c){
+            consume();
+            return;
+        }
+        throw new Error("Expected " + c + " found " + currentChar);
+    }
+
     private Token ID(){ // Lexical rule to generate ID token.
         // ID Rule: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
         StringBuilder name = new StringBuilder();
@@ -56,7 +95,8 @@ public class Lexer {
             name.append(ID().text);
             consume();
         }
-        return generateToken(name.toString(), Tokens.ID);
+        if(isKeyword(name.toString()) != null) return isKeyword(name.toString());
+        else return generateToken(name.toString(), Tokens.ID);
     }
 
     private Token NUMBER(){ // Lexical rule to generate NUMBER token.
@@ -79,6 +119,20 @@ public class Lexer {
         return generateToken(number.toString(), Tokens.NUMBER);
     }
 
+    private String STRING(){
+        match('"');
+        StringBuilder string = new StringBuilder();
+        string.append("\"");
+        for(int i = index; i < input.length() - 1; i++){
+            string.append(currentChar);
+            consume();
+            if(currentChar == '"') break;
+        }
+        match('"');
+        string.append("\"");
+        return string.toString();
+    }
+
     public Token getNextToken(){
         while (currentChar != (char)-1){
             if(isWhiteSpace(currentChar)){
@@ -88,6 +142,36 @@ public class Lexer {
 
             if(isChar(currentChar)) return ID();
             else if(isDigit(currentChar)) return NUMBER();
+            else if(currentChar == '='){
+                match('=');
+                return generateToken("=", Tokens.EQUAL);
+            }
+            else if(currentChar == ';'){
+                match(';');
+                return generateToken(";", Tokens.SEMICOLON);
+            }else if(currentChar == '{'){
+                match('{');
+                return generateToken("{", Tokens.OPENCARLYBRACKET);
+            }else if(currentChar == '}'){
+                match('}');
+                return generateToken("}", Tokens.CLOSECARLYBRACKET);
+            }else if(currentChar == '('){
+                match('(');
+                return generateToken("(", Tokens.OPENPARENTHESIS);
+            }else if(currentChar == ')'){
+                match(')');
+                return generateToken(")", Tokens.CLOSEPARENTHESIS);
+            }else if(currentChar == ','){
+                match(',');
+                return generateToken(",", Tokens.COMMA);
+            }else if(currentChar == '"'){
+                return generateToken(STRING(), Tokens.STRING);
+            }
+            else if(currentChar == '/' && peek() == '*'){
+                skipComment();
+                continue;
+            }
+            else throw new Error("Unexpected char: " + currentChar);
         }
 
         return new Token("EOF", Tokens.EOF);

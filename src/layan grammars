@@ -4,6 +4,7 @@ decl_stat: DATA_TYPE ID ('=' expression)?
 DATA_TYPE: 'int' | 'float' | 'bool' | 'string'
 ID: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
 NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
+STRING: ' " ' (NAME | NUMBER)* ' " '
 
 method_declaration: 'function' ID '(' parameters ')' '{' statments '}'
 parameters: decl_stat (',' decl_stat)*
