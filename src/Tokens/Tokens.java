@@ -29,4 +29,8 @@ public final class Tokens {
     public static final int AND = 24;
     public static final int OR = 25;
     public static final int DOT = 26;
+    public static final int PLUS = 27;
+    public static final int MINUS = 28;
+    public static final int DIVISION = 29;
+    public static final int MULTIPLICATION = 30;
 }

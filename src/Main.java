@@ -1,4 +1,5 @@
 import Lexer.Lexer;
+import Parser.Parser;
 import Tokens.Token;
 import Tokens.Tokens;
 
@@ -22,11 +23,7 @@ public class Main {
 
 
         Lexer lexer = new Lexer(stringBuilder.toString());
-        Token t = lexer.getNextToken();
-        System.out.println(t);
-        while (t.type != Tokens.EOF){
-            t = lexer.getNextToken();
-            System.out.println(t);
-        }
+        Parser parser = new Parser(lexer, 3);
+        parser.parse();
     }
 }

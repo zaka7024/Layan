@@ -7,24 +7,31 @@ NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
 BOOLEAN: 'true' | 'false'
 
-method_declaration: 'function' ID '(' parameters ')' '{' statments '}'
+arithmetic expression:
+
+expr: term (('+'|'-') term)*
+term: factor (('*', '/') factor)*
+factor NUMBER|+|-| '(' expr ')'
+
+method_declaration: 'function' ID '(' parameters ')' '{' function_statements '}'
+parameters: decl_stat (',' decl_stat)*
+function_statements: decl_stat | if_statement | while_statement | for_statement
+
+class_declaration: 'class' ID '{'class_statements'}'
+class_statements: decl_stat | method_declaration
+
+object_declaration:Type(ID) ID '=' Type '(' parameters ')'
 parameters: decl_stat (',' decl_stat)*
 
-class_declaration: 'class' ID '{'class_statments'}'
-class_statments: decl_stat | method_declaration
 
-object_declaration:Type ID '=' Type '(' parameters ')'
-parameters: decl_stat (',' decl_stat)*
-
-
-if_statment: 'if' '(' boolean_expression ')' '{' statments '}'
+if_statement: 'if' '(' boolean_expression ')' '{' statments '}'
  ('else' '{' statments '}')?
 
-while_statment: 'while' '(' boolean_expression ')' '{' statments '}'
+while_statement: 'while' '(' boolean_expression ')' '{' statments '}'
 
-'for' '(' declaration_statament ';' boolean_expression; statment')' '{'stat'}'
-stat:statments
-statment: assignment_stat
+for_statement: 'for' '(' declaration_statament ';' boolean_expression; statment')' '{'stat'}'
+stat:statements
+statement: assignment_stat
 
 comments_stat: '/*' TEXT '*/'
 
