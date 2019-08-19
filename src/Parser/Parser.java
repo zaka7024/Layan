@@ -5,6 +5,7 @@ import Tokens.Token;
 import Tokens.Tokens;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Recursive Descent Parser LL(K)
@@ -67,17 +68,10 @@ public class Parser {
     }
 
     private void factor(){
-        if(getLookaheadType(1) == Tokens.NUMBER){
-            match(Tokens.NUMBER);
-            return;
-        }else if(getLookaheadType(1) == Tokens.ID){
-            match(Tokens.ID);
-            return;
-        }else if(getLookaheadType(1) == Tokens.PLUS){
-            match(Tokens.PLUS);
-            return;
-        }else if(getLookaheadType(1) == Tokens.MINUS){
-            match(Tokens.MINUS);
+        List<Integer> tokens = Arrays.asList(Tokens.NUMBER, Tokens.STRING, Tokens.BOOLEAN,
+                Tokens.ID, Tokens.PLUS, Tokens.MINUS);
+        if(tokens.contains(getLookaheadType(1))){
+            match(getLookaheadType(1));
             return;
         }
         match(Tokens.OPENPARENTHESIS);
@@ -146,14 +140,13 @@ public class Parser {
 
     private void statements(){ // function to determent which statement to parse using
         // lookahead buffer
-        while (getLookaheadType(1) == Tokens.ID ||
-                getLookaheadType(1) == Tokens.FUNCTION ||
-        getLookaheadType(1) == Tokens.CLASS ||
-        getLookaheadType(1) == Tokens.IF ||
-        getLookaheadType(1) == Tokens.FOR ||
-        getLookaheadType(1) == Tokens.WHILE){
+        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.FUNCTION, Tokens.CLASS,
+                Tokens.IF, Tokens.FOR, Tokens.WHILE);
+        while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
                 assignmentStatements();
+            }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
+                methodCall();
             }else if(getLookaheadType(1) == Tokens.ID){
                 declarationStatements();
             }else if(getLookaheadType(1) == Tokens.FUNCTION){
@@ -200,12 +193,12 @@ public class Parser {
 
     private void functionStatements(){ // set of statements that can be inside the
         // function declaration
-        while (getLookaheadType(1) == Tokens.ID
-                || getLookaheadType(1) == Tokens.IF
-                || getLookaheadType(1) == Tokens.WHILE
-                || getLookaheadType(1) == Tokens.FOR){
+        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.IF, Tokens.FOR, Tokens.WHILE);
+        while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
                 assignmentStatements();
+            }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
+                methodCall();
             }else if(getLookaheadType(1) == Tokens.ID){
                 declarationStatements();
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
@@ -232,6 +225,20 @@ public class Parser {
         match(Tokens.OPENCARLYBRACKET);
         functionStatements();
         match(Tokens.CLOSECARLYBRACKET);
+    }
+
+    private void methodCall(){
+        System.out.println("methodCall");
+        match(Tokens.ID);
+        match(Tokens.OPENPARENTHESIS);
+        //TODO:: Don't forget to make the function get an expr
+        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.NUMBER, Tokens.BOOLEAN,
+                Tokens.STRING);
+        while (tokens.contains(getLookaheadType(1))){
+            match(getLookaheadType(1));
+        }
+        match(Tokens.CLOSEPARENTHESIS);
+        match(Tokens.SEMICOLON);
     }
 
     private void parameters(){

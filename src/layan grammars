@@ -46,3 +46,5 @@ operators:
 <, >, <=, >=, !=, ==, !, &&, ||
 
 //TODO:: Function call statement rule
+function_call:
+ID '(' (ID | NUMBER | STRING | BOOLEAN | expr | bool_expr)* ')' ';'
