@@ -203,10 +203,22 @@ public class Lexer {
             }else if(currentChar == '|'){
                 match('|'); match('|');
                 return generateToken("||", Tokens.OR);
+            }else if(currentChar == '*'){
+                match('*');
+                return generateToken("*", Tokens.MULTIPLICATION);
             }
             else if(currentChar == '/' && peek() == '*'){
                 skipComment();
                 continue;
+            }else if(currentChar == '/'){
+                match('/');
+                return generateToken("/", Tokens.DIVISION);
+            }else if(currentChar == '-'){
+                match('-');
+                return generateToken("-", Tokens.MINUS);
+            }else if(currentChar == '+'){
+                match('+');
+                return generateToken("+", Tokens.PLUS);
             }
             else throw new Error("Unexpected char: " + currentChar);
         }

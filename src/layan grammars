@@ -1,35 +1,42 @@
 statements:
 
-decl_stat: DATA_TYPE ID ('=' expression)?
+declaration_stat: DATA_TYPE ID ('=' expression)?
 DATA_TYPE: 'int' | 'float' | 'bool' | 'string'
 ID: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
 NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
 BOOLEAN: 'true' | 'false'
 
-arithmetic expression:
+assignment_stat: ID '=' expr
 
+arithmetic expression:
 expr: term (('+'|'-') term)*
 term: factor (('*', '/') factor)*
 factor NUMBER|+|-| '(' expr ')'
 
-method_declaration: 'function' ID '(' parameters ')' '{' function_statements '}'
-parameters: decl_stat (',' decl_stat)*
-function_statements: decl_stat | if_statement | while_statement | for_statement
+boolean expression:
+bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
+or: and (('||') and)*
+and: not (('&&') and)*
+not: ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+
+method_declaration: 'function' ID '(' parameters? ')' '{' function_statements '}'
+parameters: declaration_stat (',' declaration_stat)*
+function_statements: declaration_stat | if_statement | while_statement | for_statement
 
 class_declaration: 'class' ID '{'class_statements'}'
-class_statements: decl_stat | method_declaration
+class_statements: declaration_stat | method_declaration
 
 object_declaration:Type(ID) ID '=' Type '(' parameters ')'
-parameters: decl_stat (',' decl_stat)*
+parameters: declaration_stat (',' declaration_stat)*
 
 
-if_statement: 'if' '(' boolean_expression ')' '{' statments '}'
- ('else' '{' statments '}')?
+if_statement: 'if' '(' boolean_expression ')' '{' statements '}'
+ ('else' '{' statements '}')?
 
-while_statement: 'while' '(' boolean_expression ')' '{' statments '}'
+while_statement: 'while' '(' boolean_expression ')' '{' statements '}'
 
-for_statement: 'for' '(' declaration_statament ';' boolean_expression; statment')' '{'stat'}'
+for_statement: 'for' '(' variable_declaration ';' boolean_expression; statement')' '{'stat'}'
 stat:statements
 statement: assignment_stat
 
@@ -37,3 +44,5 @@ comments_stat: '/*' TEXT '*/'
 
 operators:
 <, >, <=, >=, !=, ==, !, &&, ||
+
+//TODO:: Function call statement rule
