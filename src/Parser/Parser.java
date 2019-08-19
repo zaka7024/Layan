@@ -51,11 +51,11 @@ public class Parser {
 
     // start arithmetic expression rule
     private void expr(){
-        term();
+        boolean_expr();
         while (getLookaheadType(1) == Tokens.PLUS
                 || getLookaheadType(1) == Tokens.MINUS){
-            match(Tokens.PLUS);
-            term();
+            match(getLookaheadType(1));
+            boolean_expr();
         }
     }
 
@@ -63,6 +63,7 @@ public class Parser {
         factor();
         while (getLookaheadType(1) == Tokens.DIVISION
                 || getLookaheadType(1) == Tokens.MULTIPLICATION){
+            match(getLookaheadType(1));
             factor();
         }
     }
@@ -72,6 +73,10 @@ public class Parser {
                 Tokens.ID, Tokens.PLUS, Tokens.MINUS);
         if(tokens.contains(getLookaheadType(1))){
             match(getLookaheadType(1));
+            return;
+        }else if(getLookaheadType(1) == Tokens.NOT){
+            match(Tokens.NOT);
+            boolean_expr();
             return;
         }
         match(Tokens.OPENPARENTHESIS);
@@ -89,12 +94,9 @@ public class Parser {
         //and: not (('&&') and)*
         //not: ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
         or();
-        while (getLookaheadType(1) == Tokens.MORETHAN
-                || getLookaheadType(1) == Tokens.LESSTHAN
-                || getLookaheadType(1) == Tokens.MORETHANOREQUAL
-                || getLookaheadType(1) == Tokens.LESSTHANOREQUAL
-                || getLookaheadType(1) == Tokens.EQUALITY
-                || getLookaheadType(1) == Tokens.NOTEQUAL){
+        List<Integer> tokens = Arrays.asList(Tokens.MORETHAN, Tokens.LESSTHAN,
+                Tokens.MORETHANOREQUAL, Tokens.LESSTHANOREQUAL, Tokens.EQUALITY, Tokens.NOTEQUAL);
+        while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.MORETHAN) match(Tokens.MORETHAN);
             else if(getLookaheadType(1) == Tokens.LESSTHAN)match(Tokens.LESSTHAN);
             else if(getLookaheadType(1) == Tokens.MORETHANOREQUAL)match(Tokens.MORETHANOREQUAL);
@@ -113,10 +115,10 @@ public class Parser {
     }
 
     private void and(){
-        not();
+        term();
         while (getLookaheadType(1) == Tokens.AND){
             match(Tokens.AND);
-            not();
+            term();
         }
     }
 

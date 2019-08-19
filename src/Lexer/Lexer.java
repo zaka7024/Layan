@@ -128,9 +128,8 @@ public class Lexer {
         match('"');
         StringBuilder string = new StringBuilder();
         string.append("\"");
-        for(int i = index; i < input.length() - 1; i++){
+        for(; index < input.length() - 1; consume()){
             string.append(currentChar);
-            consume();
             if(currentChar == '"') break;
         }
         match('"');

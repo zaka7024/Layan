@@ -7,12 +7,20 @@ NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
 BOOLEAN: 'true' | 'false'
 
-assignment_stat: ID '=' expr
+assignment_stat: ID '=' expression
+
+expression:
+expr: bool (('+'|'-') bool)*
+bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
+or: and (('||') and)*
+and: term (('&&') and)*
+term: factor (('*', '/') factor)*
+factor: NUMBER| STRING | 'true' | 'false' | '+' | '-' |'(' expr ')' |('!'boolean_expr)
 
 arithmetic expression:
 expr: term (('+'|'-') term)*
 term: factor (('*', '/') factor)*
-factor NUMBER|+|-| '(' expr ')'
+factor STRING | NUMBER | + | - | '(' expr ')'
 
 boolean expression:
 bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
@@ -45,6 +53,5 @@ comments_stat: '/*' TEXT '*/'
 operators:
 <, >, <=, >=, !=, ==, !, &&, ||
 
-//TODO:: Function call statement rule
 function_call:
 ID '(' (ID | NUMBER | STRING | BOOLEAN | expr | bool_expr)* ')' ';'
