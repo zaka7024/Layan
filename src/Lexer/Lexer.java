@@ -28,6 +28,8 @@ public class Lexer {
         keywords.put("else", new Token("else", Tokens.ELSE));
         keywords.put("while", new Token("while", Tokens.WHILE));
         keywords.put("for", new Token("for", Tokens.FOR));
+        keywords.put("true", new Token("true", Tokens.BOOLEAN));
+        keywords.put("false", new Token("false", Tokens.BOOLEAN));
     }
 
     private void consume(){ // move the pointer to the next char in the input stream.
@@ -64,18 +66,20 @@ public class Lexer {
     }
 
     private void skipComment(){
-        for(int i = index; i < input.length() - 1; i++){
-            consume();
-            consume();
-            if(input.substring(i, i + 2).compareTo("*/") >= 0) break;
+        match('/');
+        match('*');
+        for(; index < input.length() - 1; consume()){
+            if(input.substring(index, index + 2).compareTo("*/") == 0) break;
         }
+        match('*');
+        match('/');
     }
 
     private Token isKeyword(String name){
         return keywords.get(name);
     }
 
-    private void match(char c){
+    private void match(char c){// check if the current char in the stream it is what i expected
         if(currentChar == c){
             consume();
             return;
@@ -119,7 +123,8 @@ public class Lexer {
         return generateToken(number.toString(), Tokens.NUMBER);
     }
 
-    private String STRING(){
+    private String STRING(){ // Lexical rule to generate STRING token
+        //STRING Rule: ' " ' (NAME | NUMBER)* ' " '
         match('"');
         StringBuilder string = new StringBuilder();
         string.append("\"");
@@ -142,6 +147,14 @@ public class Lexer {
 
             if(isChar(currentChar)) return ID();
             else if(isDigit(currentChar)) return NUMBER();
+            else if(currentChar == '.'){
+                match('.');
+                return generateToken(".", Tokens.DOT);
+            }
+            else if(currentChar == '=' && peek() == '='){
+                match('='); match('=');
+                return generateToken("==", Tokens.EQUALITY);
+            }
             else if(currentChar == '='){
                 match('=');
                 return generateToken("=", Tokens.EQUAL);
@@ -166,6 +179,30 @@ public class Lexer {
                 return generateToken(",", Tokens.COMMA);
             }else if(currentChar == '"'){
                 return generateToken(STRING(), Tokens.STRING);
+            }else if(currentChar == '>' && peek() == '='){
+                match('>'); match('=');
+                return generateToken(">=", Tokens.MORETHANOREQUAL);
+            }else if(currentChar == '>'){
+                match('>');
+                return generateToken(">", Tokens.MORETHAN);
+            }else if(currentChar == '<' && peek() == '='){
+                match('<'); match('=');
+                return generateToken("<=", Tokens.LESSTHANOREQUAL);
+            }else if(currentChar == '<'){
+                match('<');
+                return generateToken("<", Tokens.LESSTHAN);
+            }else if(currentChar == '!' && peek() == '='){
+                match('!'); match('=');
+                return generateToken("!=", Tokens.NOTEQUAL);
+            }else if(currentChar == '!'){
+                match('!');
+                return generateToken("!", Tokens.NOT);
+            }else if(currentChar == '&'){
+                match('&'); match('&');
+                return generateToken("&&", Tokens.AND);
+            }else if(currentChar == '|'){
+                match('|'); match('|');
+                return generateToken("||", Tokens.OR);
             }
             else if(currentChar == '/' && peek() == '*'){
                 skipComment();
@@ -176,6 +213,4 @@ public class Lexer {
 
         return new Token("EOF", Tokens.EOF);
     }
-
-
 }

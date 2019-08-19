@@ -18,4 +18,15 @@ public final class Tokens {
     public static final int WHILE = 13;
     public static final int FOR = 14;
     public static final int STRING = 15;
+    public static final int BOOLEAN = 16;
+    public static final int MORETHAN = 17;
+    public static final int LESSTHAN = 18;
+    public static final int MORETHANOREQUAL = 19;
+    public static final int LESSTHANOREQUAL = 20;
+    public static final int NOT = 21;
+    public static final int NOTEQUAL = 22;
+    public static final int EQUALITY = 23;
+    public static final int AND = 24;
+    public static final int OR = 25;
+    public static final int DOT = 26;
 }

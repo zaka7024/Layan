@@ -5,6 +5,7 @@ DATA_TYPE: 'int' | 'float' | 'bool' | 'string'
 ID: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
 NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
+BOOLEAN: 'true' | 'false'
 
 method_declaration: 'function' ID '(' parameters ')' '{' statments '}'
 parameters: decl_stat (',' decl_stat)*
@@ -26,3 +27,6 @@ stat:statments
 statment: assignment_stat
 
 comments_stat: '/*' TEXT '*/'
+
+operators:
+<, >, <=, >=, !=, ==, !, &&, ||
