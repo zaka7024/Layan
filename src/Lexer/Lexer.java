@@ -218,6 +218,12 @@ public class Lexer {
             }else if(currentChar == '+'){
                 match('+');
                 return generateToken("+", Tokens.PLUS);
+            }else if(currentChar == '%'){
+                match('%');
+                return generateToken("%", Tokens.MODULES);
+            }else if(currentChar == ':'){
+                match(':');
+                return generateToken(":", Tokens.COLON);
             }
             else throw new Error("Unexpected char: " + currentChar);
         }

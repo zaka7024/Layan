@@ -33,4 +33,46 @@ public final class Tokens {
     public static final int MINUS = 28;
     public static final int DIVISION = 29;
     public static final int MULTIPLICATION = 30;
+    public static final int MODULES = 31;
+    public static final int COLON = 32;
+
+public static String getTokenName(int type){
+    switch (type){
+        case EOF: return "EOF";
+        case ID: return "ID";
+        case NUMBER: return "NUMBER";
+        case EQUAL: return "=";
+        case SEMICOLON:return ";";
+        case FUNCTION:return "FUNCTION";
+        case OPENCARLYBRACKET:return "{";
+        case CLOSECARLYBRACKET:return "}";
+        case OPENPARENTHESIS:return "(";
+        case CLOSEPARENTHESIS:return ")";
+        case COMMA:return ",";
+        case CLASS:return "CLASS";
+        case IF:return "IF";
+        case ELSE:return "ELSE";
+        case WHILE:return "WHILE";
+        case FOR:return "FOR";
+        case STRING:return "STRING";
+        case BOOLEAN:return "BOOLEAN";
+        case MORETHAN:return ">";
+        case LESSTHAN:return "<";
+        case MORETHANOREQUAL:return ">=";
+        case LESSTHANOREQUAL:return "<=";
+        case NOT:return "!";
+        case NOTEQUAL:return "!=";
+        case EQUALITY:return "==";
+        case AND :return "&&";
+        case OR:return "||";
+        case DOT:return ".";
+        case PLUS:return "+";
+        case MINUS:return "-";
+        case DIVISION:return "/";
+        case MULTIPLICATION:return "*";
+        case MODULES:return "%";
+        case COLON:return ":";
+        default: return "Unknown Token";
+        }
+    }
 }

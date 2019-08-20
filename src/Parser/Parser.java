@@ -3,8 +3,6 @@ package Parser;
 import Lexer.Lexer;
 import Tokens.Token;
 import Tokens.Tokens;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +32,8 @@ public class Parser {
             consume();
             return;
         }
-        throw new Error("Syntax Error -> Expected token of type " + type + " found " + getLookaheadType(1));
+        throw new Error("Syntax Error -> Expected " + Tokens.getTokenName(type) + " found " +
+                Tokens.getTokenName(getLookaheadType(1)));
     }
 
     private Token getLookaheadToken(int p){
@@ -51,24 +50,41 @@ public class Parser {
 
     // start arithmetic expression rule
     private void expr(){
-        boolean_expr();
-        while (getLookaheadType(1) == Tokens.PLUS
-                || getLookaheadType(1) == Tokens.MINUS){
+        //expr: and (('||') and)*
+        //and: comp (('&&') and)*
+        //comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') ar)
+        //ar: term (('+'|'-') term)*
+        //term: factor (('*', '/', '%') factor)*
+        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+        and();
+        while (getLookaheadType(1) == Tokens.OR){
             match(getLookaheadType(1));
-            boolean_expr();
+            and();
+        }
+    }
+
+    private void ar(){
+        term();
+        while (getLookaheadType(1) == Tokens.PLUS || getLookaheadType(1)
+        == Tokens.MINUS){
+            match(getLookaheadType(1));
+            term();
         }
     }
 
     private void term(){
         factor();
-        while (getLookaheadType(1) == Tokens.DIVISION
-                || getLookaheadType(1) == Tokens.MULTIPLICATION){
+        List<Integer> tokens = Arrays.asList(Tokens.MULTIPLICATION, Tokens.DIVISION,
+                Tokens.MODULES);
+        while (tokens.contains(getLookaheadType(1))){
             match(getLookaheadType(1));
             factor();
         }
     }
 
     private void factor(){
+        //TODO:: Alter the rule so can support function call and variable
+        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
         List<Integer> tokens = Arrays.asList(Tokens.NUMBER, Tokens.STRING, Tokens.BOOLEAN,
                 Tokens.ID, Tokens.PLUS, Tokens.MINUS);
         if(tokens.contains(getLookaheadType(1))){
@@ -76,24 +92,19 @@ public class Parser {
             return;
         }else if(getLookaheadType(1) == Tokens.NOT){
             match(Tokens.NOT);
-            boolean_expr();
+            expr();
             return;
         }
-        match(Tokens.OPENPARENTHESIS);
-        expr();
-        match(Tokens.CLOSEPARENTHESIS);
+
+        if(getLookaheadType(1) == Tokens.OPENPARENTHESIS){
+            match(Tokens.OPENPARENTHESIS);
+            expr();
+            match(Tokens.CLOSEPARENTHESIS);
+        }
     }
 
-    // end the arithmetic expression rule
-
-    // start boolean expression rule
-    private void boolean_expr(){
-        //boolean expression:
-        //bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
-        //or: and (('||') and)*
-        //and: not (('&&') and)*
-        //not: ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
-        or();
+    private void comp(){
+        ar();
         List<Integer> tokens = Arrays.asList(Tokens.MORETHAN, Tokens.LESSTHAN,
                 Tokens.MORETHANOREQUAL, Tokens.LESSTHANOREQUAL, Tokens.EQUALITY, Tokens.NOTEQUAL);
         while (tokens.contains(getLookaheadType(1))){
@@ -103,39 +114,16 @@ public class Parser {
             else if(getLookaheadType(1) == Tokens.LESSTHANOREQUAL)match(Tokens.LESSTHANOREQUAL);
             else if(getLookaheadType(1) == Tokens.EQUALITY)match(Tokens.EQUALITY);
             else match(Tokens.NOTEQUAL);
-            or();
-        }
-    }
-    private void or(){
-        and();
-        while (getLookaheadType(1) == Tokens.OR){
-            match(Tokens.OR);
-            and();
+            ar();
         }
     }
 
     private void and(){
-        term();
+        comp();
         while (getLookaheadType(1) == Tokens.AND){
             match(Tokens.AND);
-            term();
+            comp();
         }
-    }
-
-    private void not(){
-        if(getLookaheadType(1) == Tokens.NOT){
-            match(Tokens.NOT);
-            boolean_expr();
-            return;
-        }else if(getLookaheadType(1) == Tokens.ID){
-            match(Tokens.ID);
-            return;
-        }else if(getLookaheadType(1) == Tokens.NUMBER){
-            match(Tokens.NUMBER);
-            return;
-        }
-
-        match(Tokens.BOOLEAN);
     }
 
     // end the boolean expression rule
@@ -173,7 +161,8 @@ public class Parser {
     }
 
     private void variableDeclaration(){
-        //Variable Declaration Rule: DATA_TYPE ID ('=' expression)?
+        //Variable Declaration Rule:
+        // declaration_stat: DATA_TYPE ID ('=' expression)? ((',' ID)('=' expression)?)? ';'
         System.out.println("variableDeclaration");
         match(Tokens.ID);
         match(Tokens.ID);
@@ -181,6 +170,15 @@ public class Parser {
             match(Tokens.EQUAL);
             expr();
         }
+        while (getLookaheadType(1) == Tokens.COMMA){
+            match(getLookaheadType(1));
+            match(Tokens.ID);
+            if(getLookaheadType(1) == Tokens.EQUAL){
+                match(Tokens.EQUAL);
+                expr();
+            }
+        }
+
         match(Tokens.SEMICOLON);
     }
 
@@ -270,11 +268,15 @@ public class Parser {
     }
 
     private void classDeclaration(){
-        //class_declaration: 'class' ID '{'class_statements'}'
+        //class_declaration: 'class' ID (':' TYPE) '{'class_statements'}'
         //class_statements: declaration_stat | method_declaration
         System.out.println("classDeclaration");
         match(Tokens.CLASS);
         match(Tokens.ID);
+        if(getLookaheadType(1) == Tokens.COLON){
+            match(getLookaheadType(1));
+            match(Tokens.ID);
+        }
         match(Tokens.OPENCARLYBRACKET);
         classStatements();
         match(Tokens.CLOSECARLYBRACKET);
@@ -287,7 +289,7 @@ public class Parser {
         if(getLookaheadType(1) == Tokens.IF) match(Tokens.IF);
         else match(Tokens.WHILE);
         match(Tokens.OPENPARENTHESIS);
-        boolean_expr();
+        expr();
         match(Tokens.CLOSEPARENTHESIS);
         match(Tokens.OPENCARLYBRACKET);
         functionStatements(); // also the same statements fot ifCondition
@@ -303,7 +305,7 @@ public class Parser {
         match(Tokens.FOR);
         match(Tokens.OPENPARENTHESIS);
         variableDeclaration();
-        boolean_expr();
+        expr();
         match(Tokens.SEMICOLON);
         //TODO:: Make it work for function call
         match(Tokens.ID);

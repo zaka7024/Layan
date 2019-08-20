@@ -1,6 +1,5 @@
 statements:
-
-declaration_stat: DATA_TYPE ID ('=' expression)?
+declaration_stat: DATA_TYPE ID ('=' expression)? ((',' ID)('=' expression)?)? ';'
 DATA_TYPE: 'int' | 'float' | 'bool' | 'string'
 ID: (('a'..'z' | 'A'..'Z')+(NUMBER*))+
 NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
@@ -10,29 +9,18 @@ BOOLEAN: 'true' | 'false'
 assignment_stat: ID '=' expression
 
 expression:
-expr: bool (('+'|'-') bool)*
-bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
-or: and (('||') and)*
-and: term (('&&') and)*
-term: factor (('*', '/') factor)*
-factor: NUMBER| STRING | 'true' | 'false' | '+' | '-' |'(' expr ')' |('!'boolean_expr)
-
-arithmetic expression:
-expr: term (('+'|'-') term)*
-term: factor (('*', '/') factor)*
-factor STRING | NUMBER | + | - | '(' expr ')'
-
-boolean expression:
-bool: or(('>' | '<' | '>=' | '<=' | '==' | '!=') or)
-or: and (('||') and)*
-and: not (('&&') and)*
-not: ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+expr: and (('||') and)*
+and: comp (('&&') and)*
+comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') or)
+ar: term (('+'|'-') term)*
+term: factor (('*', '/', '%') factor)*
+factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
 
 method_declaration: 'function' ID '(' parameters? ')' '{' function_statements '}'
 parameters: declaration_stat (',' declaration_stat)*
 function_statements: declaration_stat | if_statement | while_statement | for_statement
 
-class_declaration: 'class' ID '{'class_statements'}'
+class_declaration: 'class' ID (':' TYPE) '{'class_statements'}'
 class_statements: declaration_stat | method_declaration
 
 object_declaration:Type(ID) ID '=' Type '(' parameters ')'
@@ -51,7 +39,7 @@ statement: assignment_stat
 comments_stat: '/*' TEXT '*/'
 
 operators:
-<, >, <=, >=, !=, ==, !, &&, ||
+<, >, <=, >=, !=, ==, !, &&, ||, %
 
 function_call:
 ID '(' (ID | NUMBER | STRING | BOOLEAN | expr | bool_expr)* ')' ';'
