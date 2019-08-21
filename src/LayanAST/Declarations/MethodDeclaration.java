@@ -23,6 +23,9 @@ public class MethodDeclaration extends LayanAST {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("( method ");
         stringBuilder.append(id.name.text + " ");
+        for(LayanAST node: parameters){
+            stringBuilder.append(node.toStringNode());
+        }
         stringBuilder.append(block.toStringNode());
         stringBuilder.append(" )");
         return stringBuilder.toString();

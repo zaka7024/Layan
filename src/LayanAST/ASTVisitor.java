@@ -1,5 +1,6 @@
 package LayanAST;
 
+import LayanAST.Conditions.ConditionNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.AddNode;
 import LayanAST.Expressions.SubtractionNode;
@@ -17,6 +18,7 @@ public class ASTVisitor {
         switch (root.token.type){
             case Tokens.TYPE: walkVariableDeclaration((VariableDeclaration) root); break;
             case Tokens.ID: walkID((ID) root); break;
+            case Tokens.IF: walkConditionNode((ConditionNode) root); break;
             case Tokens.CLASS: walkClassDeclaration((ClassDeclaration) root); break;
             case Tokens.FUNCTION: walkMethodDeclaration((MethodDeclaration) root); break;
             case Tokens.OPENCARLYBRACKET: walkBlock((BlockNode) root); break;
@@ -69,5 +71,10 @@ public class ASTVisitor {
 
     private void walkUnaryNegative(UnaryNegative unaryNegative){
         System.out.println(unaryNegative);
+    }
+
+    private void walkConditionNode(ConditionNode node){
+        System.out.println("walkConditionNode");
+        System.out.println(node.toStringNode());
     }
 }

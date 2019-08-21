@@ -27,7 +27,9 @@ public class VariableDeclaration extends LayanAST {
         stringBuilder.append("( ");
         stringBuilder.append(type.name.text + " ");
         stringBuilder.append(id.name.text + " ");
-        stringBuilder.append(expression.toStringNode());
+        if(expression != null)
+            stringBuilder.append(expression.toStringNode());
+        else stringBuilder.append("null");
         stringBuilder.append(" )");
         return stringBuilder.toString();
     }

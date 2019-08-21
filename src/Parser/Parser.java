@@ -1,5 +1,6 @@
 package Parser;
 
+import LayanAST.Conditions.ConditionNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.LayanAST;
@@ -7,6 +8,8 @@ import LayanAST.EOF;
 import Lexer.Lexer;
 import Tokens.Token;
 import Tokens.Tokens;
+import com.sun.org.apache.bcel.internal.generic.FADD;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -160,13 +163,13 @@ public class Parser {
 
         while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
-                assignmentStatements();
+                return assignmentStatements();
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 methodCall();
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 return declarationStatements();
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
-                conditionStatements();
+                return conditionStatements();
             }else if (getLookaheadType(1) == Tokens.FOR){
                 iterationStatement();
             }
@@ -255,18 +258,21 @@ public class Parser {
         match(Tokens.OPENPARENTHESIS);
 
         List<VariableDeclaration> para = new ArrayList<>();
-        parameters(para);
+        parameters(para); // get all parameters
 
         match(Tokens.CLOSEPARENTHESIS);
         BlockNode blockNode = new BlockNode(match(Tokens.OPENCARLYBRACKET));
         blockNode.layanASTList.addAll(functionStatements());
-        match(Tokens.CLOSECARLYBRACKET);
 
-        return new MethodDeclaration(functionToken, name, blockNode);
+        match(Tokens.CLOSECARLYBRACKET);
+        MethodDeclaration methodDeclaration = new MethodDeclaration(functionToken, name, blockNode);
+        methodDeclaration.parameters = para;
+
+        return methodDeclaration;
     }
 
-    private void methodCallParameters(){ // Work for class and method parameters
-        expr();
+    private ExprNode methodCallParameters(){ // Work for class and method parameters
+        return expr();
     }
 
     private void methodCall(){
@@ -285,10 +291,13 @@ public class Parser {
 
     private void parameters(List<VariableDeclaration> para){
         // parameters: Type ID (',' parameters)*
-        if(getLookaheadType(1) == Tokens.ID){
-            para.add(variableDeclaration());
+        if(getLookaheadType(1) == Tokens.TYPE || getLookaheadType(1) == Tokens.ID){
+            VariableDeclaration variableDeclaration =
+                    new VariableDeclaration(new ID(match(getLookaheadType(1))), new ID(match(getLookaheadType(1))));
             //TODO::Init value for the args
+            para.add(variableDeclaration);
             while (getLookaheadType(1) == Tokens.COMMA){
+                match(getLookaheadType(1));
                 parameters(para);
             }
         }
@@ -341,18 +350,34 @@ public class Parser {
         match(Tokens.CLOSEPARENTHESIS);
     }
 
-    private void conditionStatements(){
+    private ConditionNode conditionStatements(){
         //if_statement|while_statement: ('if'|'while) '(' boolean_expression ')' '{' statements '}'
         // ('else' '{' statements '}')?
         System.out.println("conditionStatements");
-        if(getLookaheadType(1) == Tokens.IF) match(Tokens.IF);
-        else match(Tokens.WHILE);
+        ConditionNode conditionNode = null;
+        Token conditionToken;
+        if(getLookaheadType(1) == Tokens.IF) conditionToken = match(Tokens.IF);
+        else conditionToken = match(Tokens.WHILE);
         match(Tokens.OPENPARENTHESIS);
-        expr();
+        ExprNode exprNode = expr();
         match(Tokens.CLOSEPARENTHESIS);
-        match(Tokens.OPENCARLYBRACKET);
-        functionStatements(); // also the same statements fot ifCondition
+
+        BlockNode truePartBlock = new BlockNode(match(Tokens.OPENCARLYBRACKET));
+        BlockNode falsePartBlock = null;
+        truePartBlock.layanASTList.addAll(functionStatements()); // also the same statements fot ifCondition
         match(Tokens.CLOSECARLYBRACKET);
+
+        // Check if there is an else part
+
+        if(getLookaheadType(1) == Tokens.ELSE){
+            match(getLookaheadType(1));
+            falsePartBlock = new BlockNode(match(Tokens.OPENCARLYBRACKET));
+            falsePartBlock.layanASTList.addAll(functionStatements());
+            match(Tokens.CLOSECARLYBRACKET);
+        }
+
+        conditionNode = new ConditionNode(exprNode, conditionToken,truePartBlock, falsePartBlock);
+        return conditionNode;
     }
 
     private void iterationStatement(){

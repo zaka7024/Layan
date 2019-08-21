@@ -30,9 +30,9 @@ parameters: declaration_stat (',' declaration_stat)*
 //TODO:: Support object declaration
 
 
-if_statement: 'if' '(' boolean_expression ')' block
- ('else' block')?
- block: '{' function_statements '}'
+if_statement: 'if' '(' expression ')' block
+('else' block')?
+block: '{' function_statements '}'
 
 while_statement: 'while' '(' boolean_expression ')' block
 block: '{' statements '}'
