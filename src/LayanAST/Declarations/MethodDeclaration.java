@@ -4,13 +4,27 @@ import LayanAST.Expressions.ExprNode;
 import LayanAST.LayanAST;
 import Tokens.Token;
 
-public class MethodDeclaration extends LayanAST {
-    Token id;
-    BlockNode block;
+import java.util.ArrayList;
+import java.util.List;
 
-    public MethodDeclaration(Token t, Token id, BlockNode blockNode) {
-        super(t);
-        this.id = id;
+public class MethodDeclaration extends LayanAST {
+    public ID id;
+    public List<VariableDeclaration> parameters = new ArrayList<>();
+    public BlockNode block;
+
+    public MethodDeclaration( Token id,ID name, BlockNode blockNode) {
+        super(id);
+        this.id = name;
         block = blockNode;
+    }
+
+    @Override
+    public String toStringNode() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("( method ");
+        stringBuilder.append(id.name.text + " ");
+        stringBuilder.append(block.toStringNode());
+        stringBuilder.append(" )");
+        return stringBuilder.toString();
     }
 }

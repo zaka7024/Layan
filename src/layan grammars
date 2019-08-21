@@ -14,13 +14,15 @@ and: comp (('&&') and)*
 comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') or)
 ar: term (('+'|'-') term)*
 term: factor (('*', '/', '%') factor)*
-factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false' | Type(ID) ID
+factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
 
-method_declaration: 'function' ID '(' parameters? ')' '{' function_statements '}'
+method_declaration: 'function' ID '(' parameters? ')' block
+block: '{' function_statements '}'
 parameters: declaration_stat (',' declaration_stat)*
 function_statements: declaration_stat | if_statement | while_statement | for_statement
 
-class_declaration: 'class' ID (':' TYPE) '{'class_statements'}'
+class_declaration: 'class' ID (':' TYPE) block
+block: '{'class_statements'}'
 class_statements: declaration_stat | method_declaration
 
 object_declaration:Type(ID) ID '=' Type '(' parameters ')'
@@ -28,14 +30,17 @@ parameters: declaration_stat (',' declaration_stat)*
 //TODO:: Support object declaration
 
 
-if_statement: 'if' '(' boolean_expression ')' '{' statements '}'
- ('else' '{' statements '}')?
+if_statement: 'if' '(' boolean_expression ')' block
+ ('else' block')?
+ block: '{' function_statements '}'
 
-while_statement: 'while' '(' boolean_expression ')' '{' statements '}'
+while_statement: 'while' '(' boolean_expression ')' block
+block: '{' statements '}'
 
-for_statement: 'for' '(' variable_declaration ';' boolean_expression; statement')' '{'stat'}'
+for_statement: 'for' '(' variable_declaration ';' boolean_expression; statement')' block
 stat:statements
 statement: assignment_stat
+block: '{' statements '}'
 
 comments_stat: '/*' TEXT '*/'
 

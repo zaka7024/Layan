@@ -2,17 +2,17 @@ package LayanAST.Expressions;
 
 import Tokens.Token;
 
-public class NotNode extends ExprNode{
+public class UnaryPositive extends ExprNode {
     public ExprNode expression;
-    public NotNode(Token t, ExprNode expr) {
+    public UnaryPositive(Token t, ExprNode exprNode) {
         super(t);
-        expression = expr;
+        expression = exprNode;
     }
 
     @Override
     public String toStringNode() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("( ! ");
+        stringBuilder.append("( - ");
         stringBuilder.append(expression.toStringNode());
         stringBuilder.append(" )");
         return stringBuilder.toString();

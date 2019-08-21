@@ -7,4 +7,9 @@ public class FloatNode extends ExprNode {
         super(t);
         evalType = floatType;
     }
+
+    @Override
+    public String toStringNode() {
+        return token.text;
+    }
 }

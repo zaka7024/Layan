@@ -12,11 +12,12 @@ public abstract class ExprNode extends LayanAST {
 
     int evalType;
 
-    ExprNode(Token t){
+    public ExprNode(Token t){
         super(t);
     }
 
-    public int getEvalType() {
-        return evalType;
+    @Override
+    public String toStringNode() {
+        return "";
     }
 }

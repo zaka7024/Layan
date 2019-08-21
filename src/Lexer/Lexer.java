@@ -30,6 +30,10 @@ public class Lexer {
         keywords.put("for", new Token("for", Tokens.FOR));
         keywords.put("true", new Token("true", Tokens.BOOLEAN));
         keywords.put("false", new Token("false", Tokens.BOOLEAN));
+        keywords.put("int", new Token("int", Tokens.TYPE));
+        keywords.put("float", new Token("float", Tokens.TYPE));
+        keywords.put("string", new Token("string", Tokens.TYPE));
+        keywords.put("bool", new Token("bool", Tokens.TYPE));
     }
 
     private void consume(){ // move the pointer to the next char in the input stream.
@@ -98,7 +102,7 @@ public class Lexer {
         while (isDigit(currentChar)){
             name.append(ID().text);
             consume();
-        }
+        }//TODO:: Check this intw=10
         if(isKeyword(name.toString()) != null) return isKeyword(name.toString());
         else return generateToken(name.toString(), Tokens.ID);
     }
