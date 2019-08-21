@@ -35,12 +35,12 @@ if_statement: 'if' '(' expression ')' block
 block: '{' function_statements '}'
 
 while_statement: 'while' '(' boolean_expression ')' block
-block: '{' statements '}'
+block: '{' function_statements '}'
 
 for_statement: 'for' '(' variable_declaration ';' boolean_expression; statement')' block
 stat:statements
 statement: assignment_stat
-block: '{' statements '}'
+block: '{' function_statements '}'
 
 comments_stat: '/*' TEXT '*/'
 

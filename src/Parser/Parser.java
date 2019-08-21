@@ -1,6 +1,7 @@
 package Parser;
 
 import LayanAST.Conditions.ConditionNode;
+import LayanAST.Conditions.IterationNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.LayanAST;
@@ -171,7 +172,7 @@ public class Parser {
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
                 return conditionStatements();
             }else if (getLookaheadType(1) == Tokens.FOR){
-                iterationStatement();
+                return iterationStatement();
             }
         }
         return new EOF(getLookaheadToken(1));
@@ -380,24 +381,29 @@ public class Parser {
         return conditionNode;
     }
 
-    private void iterationStatement(){
+    private IterationNode iterationStatement(){
         //for_statement: 'for' '(' variable_declaration boolean_expression ; statement')'
         // '{'stat'}'
         //stat:statements
         //statement: assignment_stat
         System.out.println("iterationStatement");
-        match(Tokens.FOR);
+        Token iterationToken = match(Tokens.FOR);
         match(Tokens.OPENPARENTHESIS);
-        variableDeclaration();
-        expr();
+        VariableDeclaration iterationVar = variableDeclaration();
+        ExprNode exprNode = expr();
         match(Tokens.SEMICOLON);
         //TODO:: Make it work for function call
-        match(Tokens.ID);
-        match(Tokens.EQUAL);
-        expr();
+        EqualNode equalNode;
+        ID name = new ID(match(Tokens.ID));
+        Token equalToken = match(Tokens.EQUAL);
+        ExprNode expr = expr();
+        equalNode = new EqualNode(name, equalToken, expr);
+
         match(Tokens.CLOSEPARENTHESIS);
-        match(Tokens.OPENCARLYBRACKET);
-        functionStatements(); // also work for this rule
+        BlockNode blockNode = new BlockNode(match(Tokens.OPENCARLYBRACKET));
+        blockNode.layanASTList.addAll(functionStatements()); // also work for this rule
         match(Tokens.CLOSECARLYBRACKET);
+
+        return new IterationNode(iterationVar, exprNode, iterationToken, equalNode, blockNode);
     }
 }
