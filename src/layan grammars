@@ -14,7 +14,7 @@ and: comp (('&&') and)*
 comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') or)
 ar: term (('+'|'-') term)*
 term: factor (('*', '/', '%') factor)*
-factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false' | Type(ID) ID
 
 method_declaration: 'function' ID '(' parameters? ')' '{' function_statements '}'
 parameters: declaration_stat (',' declaration_stat)*
@@ -25,6 +25,7 @@ class_statements: declaration_stat | method_declaration
 
 object_declaration:Type(ID) ID '=' Type '(' parameters ')'
 parameters: declaration_stat (',' declaration_stat)*
+//TODO:: Support object declaration
 
 
 if_statement: 'if' '(' boolean_expression ')' '{' statements '}'
@@ -42,4 +43,4 @@ operators:
 <, >, <=, >=, !=, ==, !, &&, ||, %
 
 function_call:
-ID '(' (ID | NUMBER | STRING | BOOLEAN | expr | bool_expr)* ')' ';'
+ID '(' ((ID | NUMBER | STRING | BOOLEAN | expr | bool_expr) ',')'* ')' ';'

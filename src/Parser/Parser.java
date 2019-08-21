@@ -84,22 +84,29 @@ public class Parser {
 
     private void factor(){
         //TODO:: Alter the rule so can support function call and variable
-        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' |
+        // 'false' | Type(ID) ID | ID
         List<Integer> tokens = Arrays.asList(Tokens.NUMBER, Tokens.STRING, Tokens.BOOLEAN,
-                Tokens.ID, Tokens.PLUS, Tokens.MINUS);
+                Tokens.PLUS, Tokens.MINUS);
         if(tokens.contains(getLookaheadType(1))){
             match(getLookaheadType(1));
             return;
-        }else if(getLookaheadType(1) == Tokens.NOT){
+        }else if(getLookaheadType(1) == Tokens.ID &&
+                getLookaheadType(2) == Tokens.OPENPARENTHESIS){
+            objectDeclaration();
+        }else if(getLookaheadType(1) == Tokens.ID){
+            match(getLookaheadType(1));
+        }
+        else if(getLookaheadType(1) == Tokens.NOT){
             match(Tokens.NOT);
             expr();
             return;
-        }
-
-        if(getLookaheadType(1) == Tokens.OPENPARENTHESIS){
+        }else if(getLookaheadType(1) == Tokens.OPENPARENTHESIS){
             match(Tokens.OPENPARENTHESIS);
             expr();
             match(Tokens.CLOSEPARENTHESIS);
+        }else{
+            throw new Error("Syntax Error");
         }
     }
 
@@ -125,8 +132,6 @@ public class Parser {
             comp();
         }
     }
-
-    // end the boolean expression rule
 
     private void statements(){ // function to determent which statement to parse using
         // lookahead buffer
@@ -227,15 +232,19 @@ public class Parser {
         match(Tokens.CLOSECARLYBRACKET);
     }
 
+    private void methodCallParameters(){ // Work for class and method parameters
+        expr();
+    }
+
     private void methodCall(){
+        //ID '(' (expr ',')'* ')' ';'
         System.out.println("methodCall");
         match(Tokens.ID);
         match(Tokens.OPENPARENTHESIS);
-        //TODO:: Don't forget to make the function get an expr
-        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.NUMBER, Tokens.BOOLEAN,
-                Tokens.STRING);
-        while (tokens.contains(getLookaheadType(1))){
+        methodCallParameters();
+        while (getLookaheadType(1) == Tokens.COMMA){
             match(getLookaheadType(1));
+            methodCallParameters();
         }
         match(Tokens.CLOSEPARENTHESIS);
         match(Tokens.SEMICOLON);
@@ -280,6 +289,19 @@ public class Parser {
         match(Tokens.OPENCARLYBRACKET);
         classStatements();
         match(Tokens.CLOSECARLYBRACKET);
+    }
+
+    private void objectDeclaration(){
+        //object_declaration: Type '(' parameters ')'
+        //parameters: declaration_stat (',' declaration_stat)*
+        match(Tokens.ID);
+        match(Tokens.OPENPARENTHESIS);
+        methodCallParameters();
+        while (getLookaheadType(1) == Tokens.COMMA){
+            match(getLookaheadType(1));
+            methodCallParameters();
+        }
+        match(Tokens.CLOSEPARENTHESIS);
     }
 
     private void conditionStatements(){
