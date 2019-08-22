@@ -19,7 +19,7 @@ public class ASTVisitor {
         switch (root.token.type){
             case Tokens.PROGRAM: walkProgram((Program) root); break;
             case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
-            case Tokens.ID: walkID((ID) root); break;
+            case Tokens.ID: walkID(root); break;
             case Tokens.IF:
             case Tokens.WHILE:
                 walkConditionNode((ConditionNode) root); break;
@@ -51,8 +51,13 @@ public class ASTVisitor {
         if(node.expression != null) walk(node.expression);
     }
 
-    private void walkID(ID node){
-        //
+    private void walkID(LayanAST node){
+        String name = node.getClass().getTypeName();
+        if(name == ID.class.getTypeName()){
+            System.out.println("id ref");
+        }else if(name == ObjectDeclaration.class.getTypeName()){
+            walkObjectDeclaration((ObjectDeclaration) node);
+        }
     }
 
     private void walkVariableDeclarationList(VariableDeclarationList node){
@@ -69,6 +74,11 @@ public class ASTVisitor {
         System.out.println("walkClassDeclaration");
         System.out.println(node.toStringNode());
         walk(node.block);
+    }
+
+    private void walkObjectDeclaration(ObjectDeclaration node){
+        System.out.println("walkObjectDeclaration");
+        System.out.println(node.toStringNode());
     }
 
     private void walkAddNode(AddNode addNode){

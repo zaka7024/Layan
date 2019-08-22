@@ -27,7 +27,7 @@ class_declaration: 'class' ID (':' TYPE) block
 block: '{'class_statements'}'
 class_statements: declaration_stat | method_declaration
 
-object_declaration:Type(ID) ID '=' Type '(' parameters ')'
+object_declaration:Type(ID) ID '=' Type '(' ')' ';'
 parameters: declaration_stat (',' declaration_stat)*
 //TODO:: Support object declaration
 

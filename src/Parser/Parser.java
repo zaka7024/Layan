@@ -164,7 +164,7 @@ public class Parser {
         // lookahead buffer
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.FUNCTION, Tokens.CLASS,
                 Tokens.IF, Tokens.FOR, Tokens.WHILE);
-        List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.CLASS, Tokens.FUNCTION);
+        List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.ID, Tokens.CLASS, Tokens.FUNCTION);
 
         List<LayanAST> programStatements = new ArrayList<LayanAST>();
 
@@ -192,6 +192,8 @@ public class Parser {
             return variableDeclaration();
         }else if(getLookaheadType(1) == Tokens.FUNCTION) {
             return methodDeclaration();
+        }else if(getLookaheadType(1) == Tokens.ID){
+            return objectDeclaration();
         }else{
             return classDeclaration();
         }
@@ -239,7 +241,7 @@ public class Parser {
     private List<LayanAST> functionStatements(){ // set of statements that can be inside the
         // function declaration
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.IF, Tokens.FOR, Tokens.WHILE);
-        List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.CLASS, Tokens.FUNCTION);
+        List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.ID);
         List<LayanAST> layanASTList = new ArrayList<LayanAST>();
         while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
@@ -348,18 +350,19 @@ public class Parser {
         return new ClassDeclaration(classToken, name, blockNode, superClass);
     }
 
-    private void objectDeclaration(){
-        //object_declaration: ID(Type) ID '(' parameters ')'
+    private ObjectDeclaration objectDeclaration(){
+        //object_declaration: Type(ID) ID '=' Type '(' ')' ';'
         //parameters: declaration_stat (',' declaration_stat)*
-        match(Tokens.ID);
-        match(Tokens.ID);
-        match(Tokens.OPENPARENTHESIS);
-        methodCallParameters();
-        while (getLookaheadType(1) == Tokens.COMMA){
+        ID type = new ID(match(Tokens.ID));
+        ID name = new ID(match(Tokens.ID));
+        if(getLookaheadType(1) == Tokens.EQUAL){
             match(getLookaheadType(1));
-            methodCallParameters();
+            match(Tokens.ID);
+            match(Tokens.OPENPARENTHESIS);
+            match(Tokens.CLOSEPARENTHESIS);
         }
-        match(Tokens.CLOSEPARENTHESIS);
+        match(Tokens.SEMICOLON);
+        return new ObjectDeclaration(type, name);
     }
 
     private ConditionNode conditionStatements(){
