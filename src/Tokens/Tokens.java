@@ -36,6 +36,7 @@ public final class Tokens {
     public static final int MODULES = 31;
     public static final int COLON = 32;
     public static final int TYPE = 33;
+    public static final int PROGRAM = 34;
 
 public static String getTokenName(int type){
     switch (type){

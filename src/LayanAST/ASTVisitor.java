@@ -17,7 +17,8 @@ public class ASTVisitor {
 
     private void walk(LayanAST root){
         switch (root.token.type){
-            case Tokens.TYPE: walkVariableDeclaration((VariableDeclaration) root); break;
+            case Tokens.PROGRAM: walkProgram((Program) root); break;
+            case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
             case Tokens.ID: walkID((ID) root); break;
             case Tokens.IF:
             case Tokens.WHILE:
@@ -31,20 +32,32 @@ public class ASTVisitor {
         }
     }
 
+    private void walkProgram(Program program){
+        for (LayanAST node: program.statements){
+            walk(node);
+        }
+    }
+
     private void walkBlock(BlockNode blockNode){
         for(LayanAST node: blockNode.layanASTList){
             walk(node);
         }
+
     }
 
     private void walkVariableDeclaration(VariableDeclaration node){
         System.out.println("walkVariableDeclaration");
         System.out.println(node.toStringNode());
-        walk(node.expression);
+        if(node.expression != null) walk(node.expression);
     }
 
     private void walkID(ID node){
         //
+    }
+
+    private void walkVariableDeclarationList(VariableDeclarationList node){
+        for(VariableDeclaration item: node.variableDeclarations)
+            walkVariableDeclaration(item);
     }
 
     private void walkMethodDeclaration(MethodDeclaration node){
@@ -54,6 +67,7 @@ public class ASTVisitor {
 
     private void walkClassDeclaration(ClassDeclaration node){
         System.out.println("walkClassDeclaration");
+        System.out.println(node.toStringNode());
         walk(node.block);
     }
 

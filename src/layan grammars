@@ -1,3 +1,5 @@
+program: statements
+
 statements:
 declaration_stat: DATA_TYPE ID ('=' expression)? ((',' ID)('=' expression)?)? ';'
 DATA_TYPE: 'int' | 'float' | 'bool' | 'string'

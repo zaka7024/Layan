@@ -5,11 +5,11 @@ import LayanAST.Conditions.IterationNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.LayanAST;
+import LayanAST.Program;
 import LayanAST.EOF;
 import Lexer.Lexer;
 import Tokens.Token;
 import Tokens.Tokens;
-import com.sun.org.apache.bcel.internal.generic.FADD;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,26 +156,33 @@ public class Parser {
         return null;
     }
 
-    private LayanAST statements(){ // function to determent which statement to parse using
+    private Program program(){
+        return statements();
+    }
+
+    private Program statements(){ // function to determent which statement to parse using
         // lookahead buffer
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.FUNCTION, Tokens.CLASS,
                 Tokens.IF, Tokens.FOR, Tokens.WHILE);
         List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.CLASS, Tokens.FUNCTION);
 
+        List<LayanAST> programStatements = new ArrayList<LayanAST>();
+
         while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
-                return assignmentStatements();
+                programStatements.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
-                methodCall();
+                //programStatements.add(methodCall());
             }else if(declarationTokens.contains(getLookaheadType(1))){
-                return declarationStatements();
+                programStatements.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
-                return conditionStatements();
+                programStatements.add(conditionStatements());
             }else if (getLookaheadType(1) == Tokens.FOR){
-                return iterationStatement();
+                programStatements.add(iterationStatement());
             }
         }
-        return new EOF(getLookaheadToken(1));
+        //return new EOF(getLookaheadToken(1));
+        return new Program(new Token("Program", Tokens.PROGRAM), programStatements);
     }
 
     private LayanAST declarationStatements(){ // rule represent the declaration statements include
@@ -190,9 +197,12 @@ public class Parser {
         }
     }
 
-    private VariableDeclaration variableDeclaration(){
+    private VariableDeclarationList variableDeclaration(){
         //Variable Declaration Rule:
         // declaration_stat: DATA_TYPE ID ('=' expression)? ((',' ID)('=' expression)?)? ';'
+
+        List<VariableDeclaration> variableDeclarations = new ArrayList<>();
+
         System.out.println("variableDeclaration");
         ID type = new ID(match(Tokens.TYPE));
         ID name = new ID(match(Tokens.ID));
@@ -201,18 +211,19 @@ public class Parser {
             match(Tokens.EQUAL);
             exprNode = expr();
         }
+        variableDeclarations.add(new VariableDeclaration(type, name, exprNode));
         //TODO:: Rule for declaration list of variables
         while (getLookaheadType(1) == Tokens.COMMA){
             match(getLookaheadType(1));
-            match(Tokens.ID);
+            name = new ID(match(Tokens.ID));
             if(getLookaheadType(1) == Tokens.EQUAL){
                 match(Tokens.EQUAL);
-                expr();
+                exprNode = expr();
             }
+            variableDeclarations.add(new VariableDeclaration(type, name, exprNode));
         }
-        VariableDeclaration variableDeclaration = new VariableDeclaration(type, name, exprNode);
         match(Tokens.SEMICOLON);
-        return variableDeclaration;
+        return new VariableDeclarationList(type, variableDeclarations);
     }
 
     private LayanAST assignmentStatements(){
@@ -238,9 +249,9 @@ public class Parser {
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 layanASTList.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
-                conditionStatements();
+                layanASTList.add(conditionStatements());
             }else if(getLookaheadType(1) == Tokens.FOR){
-                iterationStatement();
+                layanASTList.add(iterationStatement());
             }else{
                 throw new Error("Syntax Error");
             }
@@ -389,7 +400,7 @@ public class Parser {
         System.out.println("iterationStatement");
         Token iterationToken = match(Tokens.FOR);
         match(Tokens.OPENPARENTHESIS);
-        VariableDeclaration iterationVar = variableDeclaration();
+        VariableDeclaration iterationVar = variableDeclaration().variableDeclarations.get(0);
         ExprNode exprNode = expr();
         match(Tokens.SEMICOLON);
         //TODO:: Make it work for function call

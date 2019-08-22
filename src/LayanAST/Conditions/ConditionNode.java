@@ -28,7 +28,8 @@ public class ConditionNode extends LayanAST {
         stringBuilder.append(expression.toStringNode() + " ");
         stringBuilder.append(truePart.toStringNode());
         stringBuilder.append(" else ");
-        stringBuilder.append(falsePart.toStringNode());
+        if(falsePart != null)
+            stringBuilder.append(falsePart.toStringNode());
         stringBuilder.append(" )");
         return stringBuilder.toString();
     }
