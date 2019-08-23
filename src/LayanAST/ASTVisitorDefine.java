@@ -7,15 +7,17 @@ import LayanAST.Expressions.AddNode;
 import LayanAST.Expressions.SubtractionNode;
 import LayanAST.Expressions.UnaryNegative;
 import LayanAST.Expressions.UnaryPositive;
+import LayanAST.LayanAST;
 import Symbols.*;
 import Tokens.Tokens;
 
-public class ASTVisitor {
+public class ASTVisitorDefine {
 
     private Scope currentScope; // represent the current scope in the scope tree
 
-    public ASTVisitor(LayanAST root){
+    public ASTVisitorDefine(LayanAST root){
         walk(root);
+        System.out.println(currentScope);
     }
 
     private void walk(LayanAST root){
@@ -51,21 +53,20 @@ public class ASTVisitor {
 
     }
 
-    private void walkVariableDeclaration(VariableDeclaration node){
+    private Symbol walkVariableDeclaration(VariableDeclaration node){
         System.out.println(node.toStringNode());
-        currentScope.resolve(node.type.token.text); // check if this type in the tree scope
         BuiltInTypeSymbol type = new BuiltInTypeSymbol(node.type.token.text); // get type name
         VariableSymbol variableSymbol = new VariableSymbol(node.id.token.text, type, null, currentScope);
         currentScope.define(variableSymbol); // define symbol in the current scope
         node.id.symbol = variableSymbol; // map var id field to variable symbol
         if(node.expression != null) walk(node.expression);
+        return variableSymbol;
     }
 
     private void walkID(LayanAST node){
         String name = node.getClass().getTypeName();
         if(name == ID.class.getTypeName()){
-            Symbol variableSymbol = (VariableSymbol)currentScope.resolve(node.token.text);
-            ((ID)node).symbol = variableSymbol;
+            //
         }else if(name == ObjectDeclaration.class.getTypeName()){
             walkObjectDeclaration((ObjectDeclaration) node);
         }
@@ -78,12 +79,35 @@ public class ASTVisitor {
 
     private void walkMethodDeclaration(MethodDeclaration node){
         System.out.println(node.toStringNode());
+        MethodSymbol methodSymbol = new MethodSymbol(node.id.name.text, null, currentScope, node);
+        currentScope.define(methodSymbol);
+        // push scope(parameters scope) in the tree scope
+        currentScope = methodSymbol;
+        for (LayanAST arg: node.parameters)
+            currentScope.define(walkVariableDeclaration((VariableDeclaration) arg));
+        // push local scope
+        LocalScope localScope = new LocalScope(currentScope);
+        currentScope = localScope;
         walk(node.block);
+
+        System.out.println(currentScope);
+        currentScope = currentScope.getEnclosingScope(); // pop block scope
+        System.out.println(currentScope);
+        currentScope = currentScope.getEnclosingScope(); // pop parameters scope
     }
 
     private void walkClassDeclaration(ClassDeclaration node){
         System.out.println(node.toStringNode());
+        // create Class symbol (Scope)
+        ClassSymbol classSymbol = new ClassSymbol(node.id.text, null, currentScope, node);
+        // define class symbol in the current scope
+        currentScope.define(classSymbol);
+        // push the class scope in the scope tree
+        currentScope = classSymbol;
         walk(node.block);
+        System.out.println(currentScope);
+        // pop the current scope(class scope)
+        currentScope = classSymbol.getEnclosingScope();
     }
 
     private void walkObjectDeclaration(ObjectDeclaration node){

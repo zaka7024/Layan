@@ -1,4 +1,5 @@
 import LayanAST.ASTVisitor;
+import LayanAST.ASTVisitorDefine;
 import Lexer.Lexer;
 import Parser.Parser;
 import Tokens.Token;
@@ -25,6 +26,6 @@ public class Main {
 
         Lexer lexer = new Lexer(stringBuilder.toString());
         Parser parser = new Parser(lexer, 3);
-        ASTVisitor visitor = new ASTVisitor(parser.parse());
+        ASTVisitorDefine visitor = new ASTVisitorDefine(parser.parse());
     }
 }

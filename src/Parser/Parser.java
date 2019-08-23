@@ -137,9 +137,9 @@ public class Parser {
                 case Tokens.BOOLEAN: return new BoolNode(match(getLookaheadType(1)));
             }
         }else if(getLookaheadType(1) == Tokens.PLUS){
-            return new UnaryPositive(match(getLookaheadType(1)), expr());
+            return new UnaryPositive(match(getLookaheadType(1)), factor());
         }else if(getLookaheadType(1) == Tokens.MINUS){
-            return new UnaryNegative(match(getLookaheadType(1)), expr());
+            return new UnaryNegative(match(getLookaheadType(1)), factor());
         }else if(getLookaheadType(1) == Tokens.ID){
             return new ID(match(getLookaheadType(1)));
         }
@@ -187,7 +187,6 @@ public class Parser {
 
     private LayanAST declarationStatements(){ // rule represent the declaration statements include
         // variable declaration and class declaration
-        System.out.println("declarationStatements");
         if(getLookaheadType(1) == Tokens.TYPE){
             return variableDeclaration();
         }else if(getLookaheadType(1) == Tokens.FUNCTION) {
@@ -205,7 +204,6 @@ public class Parser {
 
         List<VariableDeclaration> variableDeclarations = new ArrayList<>();
 
-        System.out.println("variableDeclaration");
         ID type = new ID(match(Tokens.TYPE));
         ID name = new ID(match(Tokens.ID));
         ExprNode exprNode = null;
@@ -230,7 +228,7 @@ public class Parser {
 
     private LayanAST assignmentStatements(){
         // Assignment Statements Rule: assignment_stat: ID '=' expr
-        System.out.println("assignmentStatements");
+
         ID name = new ID(match(Tokens.ID));
         Token equalToken = match(Tokens.EQUAL);
         ExprNode exprNode = expr();
@@ -266,7 +264,6 @@ public class Parser {
         //parameters: Type ID (',' parameters)*
         //function_statements: declaration_statements | if_statement |
         // while_statement | for_statement
-        System.out.println("methodDeclaration");
         Token functionToken = match(Tokens.FUNCTION);
         ID name = new ID(match(Tokens.ID));
         match(Tokens.OPENPARENTHESIS);
@@ -291,7 +288,6 @@ public class Parser {
 
     private void methodCall(){
         //ID '(' (expr ',')'* ')' ';'
-        System.out.println("methodCall");
         match(Tokens.ID);
         match(Tokens.OPENPARENTHESIS);
         methodCallParameters();
@@ -319,13 +315,16 @@ public class Parser {
 
     private List<LayanAST> classStatements(){// set of statements the can be inside the class declaration
         List<LayanAST> layanASTList = new ArrayList<LayanAST>();
-        while (getLookaheadType(1) == Tokens.TYPE || getLookaheadType(1) == Tokens.FUNCTION){
+        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.FUNCTION);
+        while (tokens.contains(getLookaheadType(1))){
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
                 layanASTList.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.TYPE){
                 layanASTList.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.FUNCTION){
                 layanASTList.add(methodDeclaration());
+            }else if(getLookaheadType(1) == Tokens.ID){
+                layanASTList.add(objectDeclaration());
             }else{
                 throw new Error("Syntax Error");
             }
@@ -336,7 +335,6 @@ public class Parser {
     private ClassDeclaration classDeclaration(){
         //class_declaration: 'class' ID (':' TYPE) '{'class_statements'}'
         //class_statements: declaration_stat | method_declaration
-        System.out.println("classDeclaration");
         Token classToken = match(Tokens.CLASS);
         Token name = match(Tokens.ID);
         ID superClass = null;
@@ -368,7 +366,6 @@ public class Parser {
     private ConditionNode conditionStatements(){
         //if_statement|while_statement: ('if'|'while) '(' boolean_expression ')' '{' statements '}'
         // ('else' '{' statements '}')?
-        System.out.println("conditionStatements");
         ConditionNode conditionNode = null;
         Token conditionToken;
         if(getLookaheadType(1) == Tokens.IF) conditionToken = match(Tokens.IF);
@@ -400,7 +397,6 @@ public class Parser {
         // '{'stat'}'
         //stat:statements
         //statement: assignment_stat
-        System.out.println("iterationStatement");
         Token iterationToken = match(Tokens.FOR);
         match(Tokens.OPENPARENTHESIS);
         VariableDeclaration iterationVar = variableDeclaration().variableDeclarations.get(0);

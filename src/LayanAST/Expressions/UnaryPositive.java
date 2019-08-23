@@ -12,7 +12,7 @@ public class UnaryPositive extends ExprNode {
     @Override
     public String toStringNode() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("( - ");
+        stringBuilder.append("( + ");
         stringBuilder.append(expression.toStringNode());
         stringBuilder.append(" )");
         return stringBuilder.toString();
