@@ -18,4 +18,10 @@ public abstract class Symbol{
         this.def = def;
         this.scope = scope;
     }
+
+    @Override
+    public String toString() {
+        if (type != null) return type.getTypeName();
+        return "noType";
+    }
 }

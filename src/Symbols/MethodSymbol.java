@@ -16,13 +16,18 @@ public class MethodSymbol extends Symbol implements Scope{
     }
 
     @Override
+    public Scope getParentScope() {
+        return getEnclosingScope();
+    }
+
+    @Override
     public Scope getEnclosingScope() {
         return enclosingScope;
     }
 
     @Override
     public String getScopeName() {
-        return "local scope";
+        return "local scope(parameters)";
     }
 
     @Override
@@ -33,13 +38,18 @@ public class MethodSymbol extends Symbol implements Scope{
     @Override
     public Symbol resolve(String name) {
         Symbol symbol = parameters.get(name);
-        Scope scope = getEnclosingScope();
+        Scope scope = getParentScope();
         while (scope != null && symbol != null){
             symbol = scope.resolve(name);
-            scope = scope.getEnclosingScope();
+            if(symbol != null) break;
+            scope = scope.getParentScope();
         }
-
         return symbol;
+    }
+
+    @Override
+    public Symbol resolveMember(String name){
+        return parameters.get(name);
     }
 
     @Override

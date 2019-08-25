@@ -5,11 +5,11 @@ import LayanAST.LayanAST;
 import Tokens.Token;
 
 public class ClassDeclaration extends LayanAST {
-    public Token id;
+    public ID id;
     public ID superClass;
     public BlockNode block;
 
-    public ClassDeclaration(Token t, Token id, BlockNode blockNode, ID sc) {
+    public ClassDeclaration(Token t, ID id, BlockNode blockNode, ID sc) {
         super(t);
         this.id = id;
         block = blockNode;
@@ -20,7 +20,7 @@ public class ClassDeclaration extends LayanAST {
     public String toStringNode() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("( class ");
-        stringBuilder.append(id.text);
+        stringBuilder.append(id.name.text);
         stringBuilder.append(block.toStringNode());
         stringBuilder.append(" )");
         return stringBuilder.toString();

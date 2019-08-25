@@ -173,6 +173,8 @@ public class Parser {
                 programStatements.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 //programStatements.add(methodCall());
+            }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
+                programStatements.add(resolutionObject());
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 programStatements.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
@@ -236,6 +238,14 @@ public class Parser {
         return new EqualNode(name, equalToken, exprNode);
     }
 
+    private ResolutionObject resolutionObject(){
+        ID type = new ID(match(Tokens.ID));
+        match(Tokens.DOT);
+        ID member = new ID(match(Tokens.ID));
+        match(Tokens.SEMICOLON);
+        return new ResolutionObject(type, member);
+    }
+
     private List<LayanAST> functionStatements(){ // set of statements that can be inside the
         // function declaration
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.IF, Tokens.FOR, Tokens.WHILE);
@@ -246,6 +256,8 @@ public class Parser {
                 layanASTList.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 methodCall();
+            }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
+                resolutionObject();
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 layanASTList.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
@@ -336,7 +348,7 @@ public class Parser {
         //class_declaration: 'class' ID (':' TYPE) '{'class_statements'}'
         //class_statements: declaration_stat | method_declaration
         Token classToken = match(Tokens.CLASS);
-        Token name = match(Tokens.ID);
+        ID name = new ID(match(Tokens.ID));
         ID superClass = null;
         if(getLookaheadType(1) == Tokens.COLON){
             match(getLookaheadType(1));

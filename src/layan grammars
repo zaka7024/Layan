@@ -31,6 +31,7 @@ object_declaration:Type(ID) ID '=' Type '(' ')' ';'
 parameters: declaration_stat (',' declaration_stat)*
 
 resolution_object: ID '.' ID
+
 //TODO:: Support resolution operator
 
 

@@ -22,6 +22,11 @@ public class ProgramSymbol extends Symbol implements Scope{
     }
 
     @Override
+    public Scope getParentScope() {
+        return getEnclosingScope();
+    }
+
+    @Override
     public Scope getEnclosingScope() {
         return enclosingScope;
     }
@@ -40,13 +45,18 @@ public class ProgramSymbol extends Symbol implements Scope{
     @Override
     public Symbol resolve(String name) {
         Symbol symbol = globals.get(name);
-        Scope scope = getEnclosingScope();
+        Scope scope = getParentScope();
         while (scope != null && symbol != null){
             symbol = scope.resolve(name);
-            scope = scope.getEnclosingScope();
+            if(symbol != null) break;
+            scope = scope.getParentScope();
         }
-
         return symbol;
+    }
+
+    @Override
+    public Symbol resolveMember(String name){
+        return globals.get(name);
     }
 
     @Override

@@ -9,6 +9,7 @@ public class ClassSymbol extends Symbol implements Scope, Type{
 
     public Map<String, Symbol> fields = new HashMap<>();
     private Scope enclosingScope;
+    public ClassSymbol superClass;
 
     public ClassSymbol(String name, Type type, Scope cs, LayanAST def){
         super(name, type, def, cs);
@@ -18,6 +19,12 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     @Override
     public Scope getEnclosingScope() {
         return enclosingScope;
+    }
+
+    @Override
+    public Scope getParentScope() {
+        if(superClass != null) return superClass;
+        return getEnclosingScope();
     }
 
     @Override
@@ -34,12 +41,21 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     @Override
     public Symbol resolve(String name) {
         Symbol symbol = fields.get(name);
-        Scope scope = getEnclosingScope();
-        while (scope != null && symbol != null){
+        Scope scope = getParentScope();
+        while (scope != null && symbol == null){
             symbol = scope.resolve(name);
-            scope = scope.getEnclosingScope();
+            if(symbol != null) break;
+            scope = scope.getParentScope();
         }
+        return symbol;
+    }
 
+    @Override
+    public Symbol resolveMember(String name){
+        Symbol symbol = fields.get(name);
+        if(symbol == null && superClass != null){
+            symbol = superClass.resolveMember(name);
+        }
         return symbol;
     }
 
