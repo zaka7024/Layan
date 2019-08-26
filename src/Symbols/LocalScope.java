@@ -5,7 +5,7 @@ import LayanAST.LayanAST;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LocalScope implements Scope{
+public class LocalScope implements Scope, BaseScope{
 
     public Map<String, Symbol> members = new HashMap<>();
     private Scope enclosingScope;
@@ -39,7 +39,7 @@ public class LocalScope implements Scope{
     public Symbol resolve(String name) {
         Symbol symbol = members.get(name);
         Scope scope = getParentScope();
-        while (scope != null && symbol != null){
+        while (scope != null && symbol == null){
             symbol = scope.resolve(name);
             if(symbol != null) break;
             scope = scope.getParentScope();

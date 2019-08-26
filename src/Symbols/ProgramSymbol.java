@@ -3,7 +3,7 @@ package Symbols;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProgramSymbol extends Symbol implements Scope{
+public class ProgramSymbol extends Symbol implements Scope, BaseScope{
 
     public Map<String, Symbol> globals = new HashMap<>();
     private Scope enclosingScope;
@@ -46,7 +46,7 @@ public class ProgramSymbol extends Symbol implements Scope{
     public Symbol resolve(String name) {
         Symbol symbol = globals.get(name);
         Scope scope = getParentScope();
-        while (scope != null && symbol != null){
+        while (scope != null && symbol == null){
             symbol = scope.resolve(name);
             if(symbol != null) break;
             scope = scope.getParentScope();

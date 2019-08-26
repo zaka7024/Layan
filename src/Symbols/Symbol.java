@@ -21,7 +21,6 @@ public abstract class Symbol{
 
     @Override
     public String toString() {
-        if (type != null) return type.getTypeName();
-        return "noType";
+        return "symbol<" + name + ">";
     }
 }

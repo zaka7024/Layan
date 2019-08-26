@@ -56,7 +56,7 @@ public class ASTVisitorDefine {
     private Symbol walkVariableDeclaration(VariableDeclaration node){
         System.out.println(node.toStringNode());
         VariableSymbol variableSymbol = new VariableSymbol(node.id.token.text, null,
-                node.id, currentScope);
+                node, currentScope);
         currentScope.define(variableSymbol); // define symbol in the current scope
         node.id.symbol = variableSymbol; // map var id field to variable symbol
         node.id.scope = currentScope;

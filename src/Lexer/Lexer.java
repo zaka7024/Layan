@@ -50,7 +50,9 @@ public class Lexer {
     }
 
     private Token generateToken(String text, int type){
-        return new Token(text, type);
+        Token token = new Token(text, type);
+        token.tokenIndex = index;
+        return token;
     }
 
     private boolean isChar(char c){
@@ -232,6 +234,6 @@ public class Lexer {
             else throw new Error("Unexpected char: " + currentChar);
         }
 
-        return new Token("EOF", Tokens.EOF);
+        return generateToken("EOF", Tokens.EOF);
     }
 }

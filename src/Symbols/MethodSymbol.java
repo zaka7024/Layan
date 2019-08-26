@@ -39,7 +39,7 @@ public class MethodSymbol extends Symbol implements Scope{
     public Symbol resolve(String name) {
         Symbol symbol = parameters.get(name);
         Scope scope = getParentScope();
-        while (scope != null && symbol != null){
+        while (scope != null && symbol == null){
             symbol = scope.resolve(name);
             if(symbol != null) break;
             scope = scope.getParentScope();

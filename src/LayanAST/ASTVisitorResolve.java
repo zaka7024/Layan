@@ -45,9 +45,11 @@ public class ASTVisitorResolve {
     }
 
     private void walkVariableDeclaration(VariableDeclaration node){
-        Symbol symbol = node.id.scope.resolve(node.type.name.text);
-        node.type.symbol = symbol;
-        node.id.symbol.type = (Type) node.id.scope.resolve(node.type.name.text);
+        // get the variable symbol
+        VariableSymbol symbol = (VariableSymbol) node.id.scope.resolve(node.id.name.text);
+        // resolve it's type
+        symbol.type = (Type) node.id.scope.resolve(node.type.name.text);
+        node.type.symbol = node.id.scope.resolve(node.type.name.text);
         System.out.println("ref: " + (node.id.name.text + " -> " + (node.id.symbol)));
         if(node.expression != null) walk(node.expression);
     }
@@ -73,7 +75,8 @@ public class ASTVisitorResolve {
 
     private void walkID(LayanAST node){
         if(node instanceof ID){
-            ((ID)node).symbol = ((ID)node).scope.resolve(((ID) node).name.text);
+            //((ID)node).symbol = ((ID)node).scope.resolve(((ID) node).name.text);
+            ((ID) node).symbol = SymbolTable.resolve(node);
             System.out.println("ref: " + ((ID) node).name.text + " -> " + ((ID) node).symbol);
         }else if(node instanceof ObjectDeclaration){
             walkObjectDeclaration((ObjectDeclaration) node);
