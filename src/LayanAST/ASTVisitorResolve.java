@@ -57,6 +57,10 @@ public class ASTVisitorResolve {
         }
     }
 
+    private void walkFunctionCall(FunctionCall node){
+        System.out.println(node.toStringNode());
+    }
+
     private void walkVariableDeclaration(VariableDeclaration node){
         // get the variable symbol
         VariableSymbol symbol = (VariableSymbol) node.id.scope.resolve(node.id.name.text);
@@ -95,6 +99,8 @@ public class ASTVisitorResolve {
             walkObjectDeclaration((ObjectDeclaration) node);
         }else if(node instanceof ResolutionObject){
             walkResolutionObject((ResolutionObject) node);
+        }else if(node instanceof FunctionCall){
+            walkFunctionCall((FunctionCall) node);
         }
     }
 

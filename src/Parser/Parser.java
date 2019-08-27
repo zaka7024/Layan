@@ -151,8 +151,6 @@ public class Parser {
             ExprNode exprNode = expr();
             match(Tokens.CLOSEPARENTHESIS);
             return exprNode;
-        }else{
-            throw new Error("Syntax Error");
         }
         return null;
     }
@@ -173,7 +171,7 @@ public class Parser {
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
                 programStatements.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
-                //programStatements.add(methodCall());
+                programStatements.add(functionCallStatement());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
                 programStatements.add(resolutionObject());
             }else if(declarationTokens.contains(getLookaheadType(1))){
@@ -429,5 +427,26 @@ public class Parser {
         return new IterationNode(iterationVar, exprNode, iterationToken, equalNode, blockNode);
     }
 
+    private FunctionCall functionCallStatement(){
+        FunctionCall functionCall = functionCall();
+        match(Tokens.SEMICOLON);
+        return functionCall;
+    }
+
+    private FunctionCall functionCall(){
+        //function_call: ID '(' ((expression) ',')'* ')'
+        ID name = new ID(match(getLookaheadType(1)));
+        List<LayanAST> args = new ArrayList<>();
+        match(Tokens.OPENPARENTHESIS);
+        ExprNode exprNode = expr();
+        if(exprNode != null) args.add(exprNode);
+        while (getLookaheadType(1) == Tokens.COMMA){
+            match(getLookaheadType(1));
+            exprNode = expr();
+            if(exprNode != null) args.add(exprNode);
+        }
+        match(Tokens.CLOSEPARENTHESIS);
+        return new FunctionCall(name, args);
+    }
 
 }
