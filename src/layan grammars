@@ -16,7 +16,8 @@ and: comp (('&&') and)*
 comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') or)
 ar: term (('+'|'-') term)*
 term: factor (('*', '/', '%') factor)*
-factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false' | ID
+factor: + | - | '(' expr ')' |  ('!'boolean_expr) | FLOAT| INT | STRING | 'true' | 'false' | ID
+ | resolution_object
 
 method_declaration: 'function' ID '(' parameters? ')' block
 block: '{' function_statements '}'
@@ -30,9 +31,9 @@ class_statements: declaration_stat | method_declaration
 object_declaration:Type(ID) ID '=' Type '(' ')' ';'
 parameters: declaration_stat (',' declaration_stat)*
 
-resolution_object: ID '.' ID
+resolution_object: ID ('.' (ID | function_call)) ';'
 
-//TODO:: Support resolution operator
+//TODO:: Support function call in the resolution operator
 
 
 if_statement: 'if' '(' expression ')' block
@@ -51,6 +52,5 @@ comments_stat: '/*' TEXT '*/'
 
 operators:
 <, >, <=, >=, !=, ==, !, &&, ||, %
-
-function_call:
-ID '(' ((expression) ',')'* ')' ';'
+function_call_stat: function_call ';'
+function_call: ID '(' ((expression) ',')'* ')'

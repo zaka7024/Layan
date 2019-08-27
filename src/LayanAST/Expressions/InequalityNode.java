@@ -3,7 +3,7 @@ package LayanAST.Expressions;
 import Tokens.Token;
 
 public class InequalityNode extends ExprNode {
-    ExprNode left, right;
+    public ExprNode left, right;
     public InequalityNode(ExprNode l, Token t, ExprNode r) {
         super(t);
         left = l;
@@ -17,6 +17,9 @@ public class InequalityNode extends ExprNode {
         stringBuilder.append(left.toStringNode() + " ");
         stringBuilder.append(right.toStringNode());
         stringBuilder.append(" )");
+        stringBuilder.append(" )");
+        stringBuilder.append("-> ");
+        stringBuilder.append(evalType);
         return stringBuilder.toString();
     }
 }

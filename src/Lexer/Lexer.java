@@ -113,11 +113,13 @@ public class Lexer {
         // This rule work for integer and floating point number.
         // NUMBER Rule: ('0'..'9')+('.' ('0'..'9')+)?
         StringBuilder number = new StringBuilder();
+        boolean isFloat = false;
         while (isDigit(currentChar)){
             number.append(currentChar);
             consume();
         }
         if(currentChar == '.'){
+            isFloat = true;
             //TODO:: Make decision to if should be a one digit at least after the '.'
             number.append('.');
             consume();
@@ -126,7 +128,8 @@ public class Lexer {
                 consume();
             }
         }
-        return generateToken(number.toString(), Tokens.NUMBER);
+        return isFloat ? generateToken(number.toString(), Tokens.FLOAT):
+                generateToken(number.toString(), Tokens.INT);
     }
 
     private String STRING(){ // Lexical rule to generate STRING token

@@ -17,6 +17,9 @@ public class AndNode extends ExprNode {
         stringBuilder.append(left.toStringNode() + " ");
         stringBuilder.append(right.toStringNode());
         stringBuilder.append(" )");
+        stringBuilder.append(" )");
+        stringBuilder.append("-> ");
+        stringBuilder.append(evalType);
         return stringBuilder.toString();
     }
 }

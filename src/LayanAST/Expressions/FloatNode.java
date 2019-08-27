@@ -1,11 +1,12 @@
 package LayanAST.Expressions;
 
+import Symbols.BuiltInTypeSymbol;
 import Tokens.Token;
 
 public class FloatNode extends ExprNode {
-    FloatNode(Token t) {
+    public FloatNode(Token t) {
         super(t);
-        evalType = floatType;
+        evalType = new BuiltInTypeSymbol("float");
     }
 
     @Override

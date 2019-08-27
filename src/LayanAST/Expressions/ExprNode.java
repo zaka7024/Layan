@@ -1,16 +1,17 @@
 package LayanAST.Expressions;
 
 import LayanAST.LayanAST;
+import Symbols.Type;
 import Tokens.Token;
 
 public abstract class ExprNode extends LayanAST {
 
-    final int intType = 1;
-    final int floatType = 2;
-    final int stringType = 3;
-    final int boolType = 4;
+    public final static int intType = 1;
+    public final static int floatType = 2;
+    public final static int stringType = 3;
+    public final static int boolType = 4;
 
-    int evalType;
+    public Type evalType;
 
     public ExprNode(Token t){
         super(t);

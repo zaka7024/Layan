@@ -15,6 +15,9 @@ public class UnaryPositive extends ExprNode {
         stringBuilder.append("( + ");
         stringBuilder.append(expression.toStringNode());
         stringBuilder.append(" )");
+        stringBuilder.append(" )");
+        stringBuilder.append("-> ");
+        stringBuilder.append(evalType);
         return stringBuilder.toString();
     }
 }

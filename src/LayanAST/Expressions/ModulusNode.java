@@ -4,7 +4,7 @@ import Tokens.Token;
 
 public class ModulusNode extends ExprNode{
 
-    private ExprNode left, right;
+    public ExprNode left, right;
     ModulusNode(ExprNode l, Token t, ExprNode r) {
         super(t);
         left = l;
@@ -18,6 +18,9 @@ public class ModulusNode extends ExprNode{
         stringBuilder.append(left.toStringNode() + " ");
         stringBuilder.append(right.toStringNode());
         stringBuilder.append(" )");
+        stringBuilder.append(" )");
+        stringBuilder.append("-> ");
+        stringBuilder.append(evalType);
         return stringBuilder.toString();
     }
 }

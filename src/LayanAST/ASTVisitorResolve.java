@@ -6,6 +6,7 @@ import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import Symbols.*;
 import Tokens.Tokens;
+import com.sun.org.apache.xpath.internal.operations.And;
 
 public class ASTVisitorResolve {
 
@@ -29,6 +30,18 @@ public class ASTVisitorResolve {
             case Tokens.OPENCARLYBRACKET: walkBlock((BlockNode) root); break;
             case Tokens.PLUS: walkPlus(root); break;
             case Tokens.MINUS: walkMinus(root); break;
+            case Tokens.MULTIPLICATION: walkMultiplicationNode((MultiplicationNode) root); break;
+            case Tokens.DIVISION: walkDivisionNode((DivisionNode) root); break;
+            case Tokens.EQUALITY: walkEqualityNode((EqualityNode) root); break;
+            case Tokens.NOTEQUAL: walkNotEqualNode((InequalityNode) root); break;
+            case Tokens.MORETHAN: walkMoreThanNode((MoreThanNode) root); break;
+            case Tokens.MORETHANOREQUAL: walkMoreThanOrEqualNode((MoreThanOrEqualNode) root); break;
+            case Tokens.LESSTHAN: walkLessThanNode((LessThanNode) root); break;
+            case Tokens.LESSTHANOREQUAL: walkLessThanOrEqualNode((LessThanOrEqualNode) root); break;
+            case Tokens.NOT: walkNotNode((NotNode) root); break;
+            case Tokens.AND: walkAndNode((AndNode) root); break;
+            case Tokens.OR: walkOrNode((OrNode) root); break;
+            case Tokens.MODULES: walkModulusNode((ModulusNode) root); break;
         }
     }
 
@@ -102,9 +115,29 @@ public class ASTVisitorResolve {
         walk(node.block);
     }
 
+    private void walkMultiplicationNode(MultiplicationNode node){
+        node.evalType = SymbolTable.bop(node.left, node.right);
+        walk(node.left);
+        walk(node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkDivisionNode(DivisionNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.bop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkSubtractionNode(SubtractionNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.bop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
     private void walkPlus(LayanAST node){
-        String name = node.getClass().getTypeName();
-        if(name.compareTo(AddNode.class.getTypeName()) == 0){
+        if(node instanceof AddNode){
             walkAddNode((AddNode) node);
         }else{
             walkUnaryPositive((UnaryPositive) node);
@@ -112,31 +145,98 @@ public class ASTVisitorResolve {
     }
 
     private void walkAddNode(AddNode addNode){
-        if(addNode == null) return;
-        System.out.println(addNode.toStringNode());
         walk(addNode.left);
         walk(addNode.right);
+        addNode.evalType = SymbolTable.bop(addNode.left, addNode.right);
+        System.out.println(addNode.toStringNode());
     }
 
     private void walkMinus(LayanAST node){
-        String name = node.getClass().getTypeName();
-        if(name.compareTo(SubtractionNode.class.getTypeName()) == 0){
+        if(node instanceof SubtractionNode){
             walkSubtractionNode((SubtractionNode) node);
         }else{
             walkUnaryNegative((UnaryNegative) node);
         }
     }
 
-    private void walkSubtractionNode(LayanAST addNode){
-        if(addNode == null) return;
-        System.out.println(addNode.toStringNode());
+    private void walkAndNode(AndNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkOrNode(OrNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkNotEqualNode(InequalityNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkEqualityNode(EqualityNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkLessThanNode(LessThanNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkMoreThanNode(MoreThanNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkMoreThanOrEqualNode(MoreThanOrEqualNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkLessThanOrEqualNode(LessThanOrEqualNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkModulusNode(ModulusNode node){
+        walk(node.left);
+        walk(node.right);
+        node.evalType = SymbolTable.relop(node.left, node.right);
+        System.out.println(node.toStringNode());
+    }
+
+    private void walkNotNode(NotNode node){
+        walk(node.expression);
+        System.out.println(node.toStringNode());
+        node.evalType = SymbolTable.unaryNot(node);
     }
 
     private void walkUnaryPositive(UnaryPositive unaryPositive){
+        walk(unaryPositive.expression);
+        unaryPositive.evalType = SymbolTable.unaryMinus(unaryPositive.expression);
         System.out.println(unaryPositive);
     }
 
     private void walkUnaryNegative(UnaryNegative unaryNegative){
+        walk(unaryNegative.expression);
+        unaryNegative.evalType = SymbolTable.unaryMinus(unaryNegative.expression);
         System.out.println(unaryNegative);
     }
 

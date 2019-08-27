@@ -37,6 +37,8 @@ public final class Tokens {
     public static final int COLON = 32;
     public static final int TYPE = 33;
     public static final int PROGRAM = 34;
+    public static final int INT = 35;
+    public static final int FLOAT = 36;
 
 public static String getTokenName(int type){
     switch (type){
@@ -74,6 +76,10 @@ public static String getTokenName(int type){
         case MULTIPLICATION:return "*";
         case MODULES:return "%";
         case COLON:return ":";
+        case TYPE:return "TYPE";
+        case PROGRAM:return "PROGRAM";
+        case INT:return "integer";
+        case FLOAT:return "floating";
         default: return "Unknown Token";
         }
     }

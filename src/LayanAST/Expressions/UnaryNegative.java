@@ -3,7 +3,7 @@ package LayanAST.Expressions;
 import Tokens.Token;
 
 public class UnaryNegative extends ExprNode {
-    ExprNode expression;
+    public ExprNode expression;
     public UnaryNegative(Token t, ExprNode exprNode) {
         super(t);
         expression = exprNode;
@@ -15,6 +15,9 @@ public class UnaryNegative extends ExprNode {
         stringBuilder.append("( - ");
         stringBuilder.append(expression.toStringNode());
         stringBuilder.append(" )");
+        stringBuilder.append(" )");
+        stringBuilder.append("-> ");
+        stringBuilder.append(evalType);
         return stringBuilder.toString();
     }
 }

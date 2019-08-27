@@ -55,7 +55,7 @@ public class Parser {
     }
 
     public LayanAST parse(){
-        return statements();
+        return program();
     } // start parse layan statements
 
     // start arithmetic expression rule
@@ -65,7 +65,7 @@ public class Parser {
         //comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') ar)
         //ar: term (('+'|'-') term)*
         //term: factor (('*', '/', '%') factor)*
-        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' | 'false'
+        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | INT | FLOAT | STRING | 'true' | 'false'
         ExprNode node = and();
         while (getLookaheadType(1) == Tokens.OR){
             node =  new OrNode(node, match(getLookaheadType(1)), and());
@@ -127,12 +127,13 @@ public class Parser {
 
     private ExprNode factor(){
         //TODO:: Alter the rule so can support function call and variable
-        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | NUMBER| STRING | 'true' |
+        //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | FLOAT| INT | STRING | 'true' |
         // 'false' | Type(ID) ID | ID
-        List<Integer> tokens = Arrays.asList(Tokens.NUMBER, Tokens.STRING, Tokens.BOOLEAN);
+        List<Integer> tokens = Arrays.asList(Tokens.FLOAT, Tokens.INT, Tokens.STRING, Tokens.BOOLEAN);
         if(tokens.contains(getLookaheadType(1))){
             switch (getLookaheadType(1)){
-                case Tokens.NUMBER: return new IntNode(match(getLookaheadType(1)));
+                case Tokens.FLOAT: return new FloatNode(match(getLookaheadType(1)));
+                case Tokens.INT: return new IntNode(match(getLookaheadType(1)));
                 case Tokens.STRING: return new StringNode(match(getLookaheadType(1)));
                 case Tokens.BOOLEAN: return new BoolNode(match(getLookaheadType(1)));
             }
@@ -214,7 +215,6 @@ public class Parser {
             exprNode = expr();
         }
         variableDeclarations.add(new VariableDeclaration(type, name, exprNode));
-        //TODO:: Rule for declaration list of variables
         while (getLookaheadType(1) == Tokens.COMMA){
             match(getLookaheadType(1));
             name = new ID(match(Tokens.ID));
@@ -428,4 +428,6 @@ public class Parser {
 
         return new IterationNode(iterationVar, exprNode, iterationToken, equalNode, blockNode);
     }
+
+
 }
