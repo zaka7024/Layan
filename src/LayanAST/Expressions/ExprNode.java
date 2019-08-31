@@ -12,6 +12,7 @@ public abstract class ExprNode extends LayanAST {
     public final static int boolType = 4;
 
     public Type evalType;
+    public Type promoteToType;
 
     public ExprNode(Token t){
         super(t);

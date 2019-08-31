@@ -53,6 +53,12 @@ public class ASTVisitorDefine {
         }
     }
 
+    private void walkFunctionCall(FunctionCall node){
+        System.out.println(node.toStringNode());
+
+        node.id.scope = currentScope;
+    }
+
     private Symbol walkVariableDeclaration(VariableDeclaration node){
         System.out.println(node.toStringNode());
         VariableSymbol variableSymbol = new VariableSymbol(node.id.token.text, null,
@@ -71,6 +77,8 @@ public class ASTVisitorDefine {
             walkObjectDeclaration((ObjectDeclaration) node);
         }else if(node instanceof ResolutionObject){
             walkResolutionObject((ResolutionObject) node);
+        }else if(node instanceof FunctionCall){
+            walkFunctionCall((FunctionCall)node);
         }
     }
 

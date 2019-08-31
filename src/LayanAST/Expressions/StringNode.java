@@ -1,12 +1,14 @@
 package LayanAST.Expressions;
 
 import Symbols.BuiltInTypeSymbol;
+import Symbols.Type;
 import Tokens.Token;
 
 public class StringNode extends ExprNode {
     public StringNode(Token t) {
         super(t);
         evalType = new BuiltInTypeSymbol("string");
+        ((BuiltInTypeSymbol) evalType).typeIndex = 2;
     }
 
     @Override

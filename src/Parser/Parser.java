@@ -8,6 +8,7 @@ import LayanAST.LayanAST;
 import LayanAST.Program;
 import LayanAST.EOF;
 import Lexer.Lexer;
+import Symbols.BuiltInTypeSymbol;
 import Tokens.Token;
 import Tokens.Tokens;
 
@@ -207,6 +208,7 @@ public class Parser {
 
         ID type = new ID(match(Tokens.TYPE));
         ID name = new ID(match(Tokens.ID));
+        name.evalType = new BuiltInTypeSymbol(type.name.text);
         ExprNode exprNode = null;
         if(getLookaheadType(1) == Tokens.EQUAL){
             match(Tokens.EQUAL);
@@ -363,6 +365,7 @@ public class Parser {
         //parameters: declaration_stat (',' declaration_stat)*
         ID type = new ID(match(Tokens.ID));
         ID name = new ID(match(Tokens.ID));
+        name.evalType = new BuiltInTypeSymbol("void");
         if(getLookaheadType(1) == Tokens.EQUAL){
             match(getLookaheadType(1));
             match(Tokens.ID);

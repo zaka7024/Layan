@@ -6,7 +6,7 @@ import Tokens.Token;
 import java.util.List;
 
 public class FunctionCall extends LayanAST {
-    ID id;
+    public ID id;
     public List<LayanAST> args;
     public FunctionCall(ID id, List<LayanAST> args) {
         super(id.token);

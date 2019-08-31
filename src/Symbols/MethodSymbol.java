@@ -27,7 +27,7 @@ public class MethodSymbol extends Symbol implements Scope{
 
     @Override
     public String getScopeName() {
-        return "local scope(parameters)";
+        return "local scope";
     }
 
     @Override

@@ -9,7 +9,8 @@ import Tokens.Tokens;
 import com.sun.org.apache.xpath.internal.operations.And;
 
 public class ASTVisitorResolve {
-
+    
+    SymbolTable symbolTable = new SymbolTable();
     public ASTVisitorResolve(LayanAST root){
         walk(root);
     }
@@ -58,6 +59,9 @@ public class ASTVisitorResolve {
     }
 
     private void walkFunctionCall(FunctionCall node){
+        MethodSymbol methodSymbol = (MethodSymbol) node.id.scope.resolve(node.id.name.text);
+        node.id.symbol = methodSymbol;
+        System.out.println("ref: " + (node.id.name.text + " -> " + (node.id.symbol)));
         System.out.println(node.toStringNode());
     }
 
@@ -92,8 +96,9 @@ public class ASTVisitorResolve {
 
     private void walkID(LayanAST node){
         if(node instanceof ID){
-            //((ID)node).symbol = ((ID)node).scope.resolve(((ID) node).name.text);
-            ((ID) node).symbol = SymbolTable.resolve(node);
+            ((ID) node).symbol = symbolTable.resolve(node);
+            ((ID) node).evalType = symbolTable.resolve(node).type;
+            Symbol symbol = (BuiltInTypeSymbol) ((ID) node).evalType;
             System.out.println("ref: " + ((ID) node).name.text + " -> " + ((ID) node).symbol);
         }else if(node instanceof ObjectDeclaration){
             walkObjectDeclaration((ObjectDeclaration) node);
@@ -122,7 +127,7 @@ public class ASTVisitorResolve {
     }
 
     private void walkMultiplicationNode(MultiplicationNode node){
-        node.evalType = SymbolTable.bop(node.left, node.right);
+        node.evalType = symbolTable.bop(node.left, node.right);
         walk(node.left);
         walk(node.right);
         System.out.println(node.toStringNode());
@@ -131,14 +136,14 @@ public class ASTVisitorResolve {
     private void walkDivisionNode(DivisionNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.bop(node.left, node.right);
+        node.evalType = symbolTable.bop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkSubtractionNode(SubtractionNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.bop(node.left, node.right);
+        node.evalType = symbolTable.bop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
@@ -153,7 +158,7 @@ public class ASTVisitorResolve {
     private void walkAddNode(AddNode addNode){
         walk(addNode.left);
         walk(addNode.right);
-        addNode.evalType = SymbolTable.bop(addNode.left, addNode.right);
+        addNode.evalType = symbolTable.bop(addNode.left, addNode.right);
         System.out.println(addNode.toStringNode());
     }
 
@@ -168,81 +173,81 @@ public class ASTVisitorResolve {
     private void walkAndNode(AndNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkOrNode(OrNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkNotEqualNode(InequalityNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkEqualityNode(EqualityNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkLessThanNode(LessThanNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkMoreThanNode(MoreThanNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkMoreThanOrEqualNode(MoreThanOrEqualNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkLessThanOrEqualNode(LessThanOrEqualNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkModulusNode(ModulusNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = SymbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.relop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 
     private void walkNotNode(NotNode node){
         walk(node.expression);
         System.out.println(node.toStringNode());
-        node.evalType = SymbolTable.unaryNot(node);
+        node.evalType = symbolTable.unaryNot(node);
     }
 
     private void walkUnaryPositive(UnaryPositive unaryPositive){
         walk(unaryPositive.expression);
-        unaryPositive.evalType = SymbolTable.unaryMinus(unaryPositive.expression);
+        unaryPositive.evalType = symbolTable.unaryMinus(unaryPositive.expression);
         System.out.println(unaryPositive);
     }
 
     private void walkUnaryNegative(UnaryNegative unaryNegative){
         walk(unaryNegative.expression);
-        unaryNegative.evalType = SymbolTable.unaryMinus(unaryNegative.expression);
+        unaryNegative.evalType = symbolTable.unaryMinus(unaryNegative.expression);
         System.out.println(unaryNegative);
     }
 
