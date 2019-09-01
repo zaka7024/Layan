@@ -241,7 +241,11 @@ public class Parser {
     private ResolutionObject resolutionObject(){
         ID type = new ID(match(Tokens.ID));
         match(Tokens.DOT);
-        ID member = new ID(match(Tokens.ID));
+        ID member;
+        // function call member
+        if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS)
+            member = functionCall().id; // get function name
+        else member = new ID(match(Tokens.ID));
         match(Tokens.SEMICOLON);
         return new ResolutionObject(type, member);
     }

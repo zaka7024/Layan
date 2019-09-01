@@ -1,6 +1,6 @@
 package Symbols;
 
-public class BuiltInTypeSymbol extends Symbol implements Type {
+public class BuiltInTypeSymbol extends Symbol implements Type, Comparable<BuiltInTypeSymbol> {
 
     public int typeIndex;
 
@@ -23,5 +23,11 @@ public class BuiltInTypeSymbol extends Symbol implements Type {
             case "float": typeIndex = 4;break;
             case "void": typeIndex = 5;
         }
+    }
+
+    @Override
+    public int compareTo(BuiltInTypeSymbol that) {
+        if(that == null) return -1;
+        return this.typeIndex == that.typeIndex ? 0 : -1;
     }
 }

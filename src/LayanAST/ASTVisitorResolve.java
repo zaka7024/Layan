@@ -72,7 +72,10 @@ public class ASTVisitorResolve {
         symbol.type = (Type) node.id.scope.resolve(node.type.name.text);
         node.type.symbol = node.id.scope.resolve(node.type.name.text);
         System.out.println("ref: " + (node.id.name.text + " -> " + (node.id.symbol)));
-        if(node.expression != null) walk(node.expression);
+        if(node.expression != null){
+            walk(node.expression);
+            symbolTable.assign(node.id, node.expression);
+        }
     }
 
     private void walkAssignment(EqualNode node){
@@ -80,6 +83,8 @@ public class ASTVisitorResolve {
         node.id.symbol = symbol;
         walk(node.id);
         walk(node.expression);
+        // promote the expression type to left type
+        symbolTable.assign(node.id, node.expression);
     }
 
     private void walkResolutionObject(ResolutionObject node){
@@ -188,6 +193,7 @@ public class ASTVisitorResolve {
         walk(node.left);
         walk(node.right);
         node.evalType = symbolTable.relop(node.left, node.right);
+        symbolTable.eqop(node.right, node.left);
         System.out.println(node.toStringNode());
     }
 

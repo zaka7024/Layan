@@ -70,7 +70,18 @@ public class SymbolTable {
         a.promoteToType = promoteFromTo[aIndex][bIndex];
         b.promoteToType = promoteFromTo[aIndex][bIndex];
 
+        Type result = table[aIndex][bIndex];
+        if(result == _void){
+            throw new Error(a.evalType.getTypeName() + ", " + b.evalType.getTypeName() + " have incompatible types");
+        }
+
         return table[aIndex][bIndex];
+    }
+
+    public boolean canAssign(Type mainType, Type destinationType,
+                             Type promotionType){
+        return ((BuiltInTypeSymbol)mainType).compareTo((BuiltInTypeSymbol)destinationType) == 0
+                || ((BuiltInTypeSymbol)mainType).compareTo((BuiltInTypeSymbol)promotionType) == 0;
     }
 
     public Type bop(ExprNode a, ExprNode b){
@@ -85,11 +96,29 @@ public class SymbolTable {
         return getResultType(comparisonType, a, b);
     }
 
+    public void assign(ExprNode left, ExprNode right){
+        int li = ((BuiltInTypeSymbol)left.evalType).typeIndex;
+        int ri = ((BuiltInTypeSymbol)right.evalType).typeIndex;
+        right.promoteToType = promoteFromTo[ri][li];
+        // check compatible types
+        if(!canAssign(left.evalType, right.evalType, right.promoteToType)){
+            throw new Error((left.evalType.getTypeName())+ ", "
+            + right.evalType.getTypeName() + " have incompatible types");
+        }
+    }
+
     public Type unaryNot(NotNode a){
+        // check if there is a void type
+        if(a.evalType != _boolean){
+            throw new Error(a.token.text + " must be a boolean");
+        }
         return _boolean;
     }
 
     public Type unaryMinus(ExprNode a){
+        if(!(a.evalType == _int || a.evalType == _float)){
+            throw new Error(a.token.text + " must have int/float type");
+        }
         return a.evalType;
     }
 }
