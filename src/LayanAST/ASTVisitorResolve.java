@@ -61,6 +61,10 @@ public class ASTVisitorResolve {
     private void walkFunctionCall(FunctionCall node){
         MethodSymbol methodSymbol = (MethodSymbol) node.id.scope.resolve(node.id.name.text);
         node.id.symbol = methodSymbol;
+        for(LayanAST item: node.args)
+            walk(item); // compute static expression types
+        // promote the args type
+        symbolTable.call(node);
         System.out.println("ref: " + (node.id.name.text + " -> " + (node.id.symbol)));
         System.out.println(node.toStringNode());
     }
@@ -71,9 +75,15 @@ public class ASTVisitorResolve {
         // resolve it's type
         symbol.type = (Type) node.id.scope.resolve(node.type.name.text);
         node.type.symbol = node.id.scope.resolve(node.type.name.text);
+        node.id.type = (Type)node.type.symbol;
+        // compute static expression types
+        symbol.evalType = new BuiltInTypeSymbol(node.type.name.text);
+        node.type.symbol.evalType = new BuiltInTypeSymbol(node.type.name.text);
+        node.id.evalType = new BuiltInTypeSymbol(node.type.name.text);
         System.out.println("ref: " + (node.id.name.text + " -> " + (node.id.symbol)));
         if(node.expression != null){
             walk(node.expression);
+            // promote the expression to left type
             symbolTable.assign(node.id, node.expression);
         }
     }
@@ -88,8 +98,15 @@ public class ASTVisitorResolve {
     }
 
     private void walkResolutionObject(ResolutionObject node){
+
         ObjectSymbol objectSymbol = (ObjectSymbol) node.type.scope.resolve(node.type.name.text);
+        if(objectSymbol == null){
+            throw new Error("undefined symbol: " + node.type.name.text);
+        }
+        node.type.type = node.type.scope.resolve(node.type.name.text).type;
+        node.type.evalType = node.type.scope.resolveMember(node.type.name.text).evalType;
         Symbol member = ((ClassSymbol)objectSymbol.type).scope.resolveMember(node.member.name.text);
+        symbolTable.memberAccess(node);
         System.out.println("ref: " + (node.member.name.text + " -> " + (member)));
     }
 
@@ -101,9 +118,11 @@ public class ASTVisitorResolve {
 
     private void walkID(LayanAST node){
         if(node instanceof ID){
+            // map the id with pre defined symbol
             ((ID) node).symbol = symbolTable.resolve(node);
-            ((ID) node).evalType = symbolTable.resolve(node).type;
-            Symbol symbol = (BuiltInTypeSymbol) ((ID) node).evalType;
+            // set the type of id to type of this symbol, ex: ClassSymbol,BuiltInType
+            ((ID) node).type = symbolTable.resolve(node).type;
+            ((ID) node).evalType = ((Symbol)(symbolTable.resolve(node).type)).evalType;
             System.out.println("ref: " + ((ID) node).name.text + " -> " + ((ID) node).symbol);
         }else if(node instanceof ObjectDeclaration){
             walkObjectDeclaration((ObjectDeclaration) node);
@@ -120,6 +139,9 @@ public class ASTVisitorResolve {
     }
 
     private void walkMethodDeclaration(MethodDeclaration node){
+        // walk the function params
+        for(VariableDeclaration var: node.parameters)
+            walkVariableDeclaration(var);
         walk(node.block);
     }
 
@@ -259,6 +281,8 @@ public class ASTVisitorResolve {
 
     private void walkConditionNode(ConditionNode node){
         System.out.println(node.toStringNode());
+        walk(node.expression);
+        symbolTable.condition(node);
     }
 
     private void walkIterationNode(IterationNode node){

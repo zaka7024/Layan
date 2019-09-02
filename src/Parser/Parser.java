@@ -443,7 +443,7 @@ public class Parser {
     private FunctionCall functionCall(){
         //function_call: ID '(' ((expression) ',')'* ')'
         ID name = new ID(match(getLookaheadType(1)));
-        List<LayanAST> args = new ArrayList<>();
+        List<ExprNode> args = new ArrayList<>();
         match(Tokens.OPENPARENTHESIS);
         ExprNode exprNode = expr();
         if(exprNode != null) args.add(exprNode);

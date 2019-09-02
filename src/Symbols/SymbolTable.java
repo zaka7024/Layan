@@ -1,10 +1,14 @@
 package Symbols;
 
+import LayanAST.Conditions.ConditionNode;
+import LayanAST.Declarations.FunctionCall;
 import LayanAST.Declarations.ID;
 import LayanAST.Declarations.VariableDeclaration;
 import LayanAST.Expressions.ExprNode;
 import LayanAST.Expressions.NotNode;
+import LayanAST.Expressions.ResolutionObject;
 import LayanAST.LayanAST;
+import com.sun.org.apache.regexp.internal.RE;
 
 public class SymbolTable {
 
@@ -84,6 +88,29 @@ public class SymbolTable {
                 || ((BuiltInTypeSymbol)mainType).compareTo((BuiltInTypeSymbol)promotionType) == 0;
     }
 
+    public void call(FunctionCall functionCall){
+        // promote args type using the actual parameters
+        int i = 0;
+        MethodSymbol methodSymbol = ((MethodSymbol)resolve(functionCall.id));
+        for (Symbol para: methodSymbol.parameters.values()){
+            ExprNode arg = functionCall.args.get(i);
+            Type actualType = para.evalType;
+            Type argsType = arg.evalType;
+
+            int actualTypeIndex = ((BuiltInTypeSymbol) actualType).typeIndex;
+            int argsTypeIndex = ((BuiltInTypeSymbol)argsType).typeIndex;
+
+            // check if we need to promote the arg type to defined type
+            arg.promoteToType = promoteFromTo[argsTypeIndex][actualTypeIndex];
+
+            // check if can assign the args to actual para
+            if(!canAssign(actualType, argsType, arg.promoteToType)){
+                throw new Error(actualType.getTypeName() + ", " +
+                        arg.evalType.getTypeName() + " have incompatible types");
+            }
+        }
+    }
+
     public Type bop(ExprNode a, ExprNode b){
         return getResultType(arithmeticResultType, a,b);
     }
@@ -104,6 +131,18 @@ public class SymbolTable {
         if(!canAssign(left.evalType, right.evalType, right.promoteToType)){
             throw new Error((left.evalType.getTypeName())+ ", "
             + right.evalType.getTypeName() + " have incompatible types");
+        }
+    }
+
+    public void memberAccess(ResolutionObject resolutionObject){
+        if(resolutionObject.type.type.getClass() != ClassSymbol.class){
+           throw new Error(resolutionObject.type.name.text + "must have class type");
+        }
+    }
+
+    public void condition(ConditionNode conditionNode){
+        if(conditionNode.expression.evalType != _boolean){
+            throw new Error("condition statements must have boolean type");
         }
     }
 

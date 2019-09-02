@@ -24,7 +24,7 @@ public class ConditionNode extends LayanAST {
     @Override
     public String toStringNode() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("( if ");
+        stringBuilder.append("( (if|while) ");
         stringBuilder.append(expression.toStringNode() + " ");
         stringBuilder.append(truePart.toStringNode());
         stringBuilder.append(" else ");

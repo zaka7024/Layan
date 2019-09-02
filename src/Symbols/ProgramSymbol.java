@@ -2,7 +2,7 @@ package Symbols;
 
 import java.util.HashMap;
 import java.util.Map;
-
+//Global scope
 public class ProgramSymbol extends Symbol implements Scope, BaseScope{
 
     public Map<String, Symbol> globals = new HashMap<>();

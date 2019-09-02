@@ -5,6 +5,7 @@ import LayanAST.LayanAST;
 public abstract class Symbol{
     public String name;
     public Type type;
+    public Type evalType;
     public LayanAST def; // from where the symbol is defined
     public Scope scope; // symbol scope
 

@@ -1,14 +1,10 @@
 package LayanAST;
-
 import LayanAST.Conditions.ConditionNode;
 import LayanAST.Conditions.IterationNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
-import LayanAST.LayanAST;
 import Symbols.*;
 import Tokens.Tokens;
-
-import java.util.HashMap;
 
 public class ASTVisitorDefine {
 
@@ -35,6 +31,18 @@ public class ASTVisitorDefine {
             case Tokens.OPENCARLYBRACKET: walkBlock((BlockNode) root); break;
             case Tokens.PLUS: walkPlus(root); break;
             case Tokens.MINUS: walkMinus(root); break;
+            case Tokens.MULTIPLICATION: walkMultiplicationNode((MultiplicationNode) root); break;
+            case Tokens.DIVISION: walkDivisionNode((DivisionNode) root); break;
+            case Tokens.EQUALITY: walkEqualityNode((EqualityNode) root); break;
+            case Tokens.NOTEQUAL: walkNotEqualNode((InequalityNode) root); break;
+            case Tokens.MORETHAN: walkMoreThanNode((MoreThanNode) root); break;
+            case Tokens.MORETHANOREQUAL: walkMoreThanOrEqualNode((MoreThanOrEqualNode) root); break;
+            case Tokens.LESSTHAN: walkLessThanNode((LessThanNode) root); break;
+            case Tokens.LESSTHANOREQUAL: walkLessThanOrEqualNode((LessThanOrEqualNode) root); break;
+            case Tokens.NOT: walkNotNode((NotNode) root); break;
+            case Tokens.AND: walkAndNode((AndNode) root); break;
+            case Tokens.OR: walkOrNode((OrNode) root); break;
+            case Tokens.MODULES: walkModulusNode((ModulusNode) root); break;
         }
     }
 
@@ -55,7 +63,6 @@ public class ASTVisitorDefine {
 
     private void walkFunctionCall(FunctionCall node){
         System.out.println(node.toStringNode());
-
         node.id.scope = currentScope;
     }
 
@@ -100,7 +107,9 @@ public class ASTVisitorDefine {
         ObjectSymbol objectSymbol = new ObjectSymbol(node.id.name.text,null,
                 node, currentScope);
         currentScope.define(objectSymbol);
+        // Map the id with object symbol
         node.id.symbol = objectSymbol;
+        // set the scope for id the current scope
         node.id.scope = currentScope;
     }
 
@@ -154,6 +163,16 @@ public class ASTVisitorDefine {
         }
     }
 
+    private void walkMultiplicationNode(MultiplicationNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkDivisionNode(DivisionNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
     private void walkAddNode(AddNode addNode){
         if(addNode == null) return;
         System.out.println(addNode.toStringNode());
@@ -175,6 +194,55 @@ public class ASTVisitorDefine {
         System.out.println(addNode.toStringNode());
     }
 
+    private void walkAndNode(AndNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkOrNode(OrNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkNotEqualNode(InequalityNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkEqualityNode(EqualityNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkLessThanNode(LessThanNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkMoreThanNode(MoreThanNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkMoreThanOrEqualNode(MoreThanOrEqualNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkLessThanOrEqualNode(LessThanOrEqualNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkModulusNode(ModulusNode node){
+        walk(node.left);
+        walk(node.right);
+    }
+
+    private void walkNotNode(NotNode node){
+        walk(node.expression);
+    }
+
     private void walkUnaryPositive(UnaryPositive unaryPositive){
         System.out.println(unaryPositive);
     }
@@ -184,7 +252,8 @@ public class ASTVisitorDefine {
     }
 
     private void walkConditionNode(ConditionNode node){
-        System.out.println(node.toStringNode());
+        walk(node.expression);
+
     }
 
     private void walkIterationNode(IterationNode node){

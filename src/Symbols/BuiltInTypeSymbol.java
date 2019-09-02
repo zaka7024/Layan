@@ -16,8 +16,8 @@ public class BuiltInTypeSymbol extends Symbol implements Type, Comparable<BuiltI
 
     private void setTypeIndex(){
         switch (name){
-            case "userType": typeIndex = 1;break;
-            case "boolean": typeIndex = 1;break;
+            case "userType": typeIndex = 0;break;
+            case "bool": typeIndex = 1;break;
             case "string": typeIndex = 2;break;
             case "int": typeIndex = 3;break;
             case "float": typeIndex = 4;break;

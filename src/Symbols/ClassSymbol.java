@@ -14,6 +14,7 @@ public class ClassSymbol extends Symbol implements Scope, Type{
     public ClassSymbol(String name, Type type, Scope cs, LayanAST def){
         super(name, type, def, cs);
         enclosingScope = cs;
+        this.evalType = new BuiltInTypeSymbol("void");
     }
 
     @Override
