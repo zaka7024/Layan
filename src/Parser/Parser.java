@@ -127,9 +127,8 @@ public class Parser {
     }
 
     private ExprNode factor(){
-        //TODO:: Alter the rule so can support function call and variable
         //factor: + | - | '(' expr ')' |  ('!'boolean_expr) | FLOAT| INT | STRING | 'true' |
-        // 'false' | Type(ID) ID | ID
+        // 'false' | Type(ID) ID | ID | resolution_object
         List<Integer> tokens = Arrays.asList(Tokens.FLOAT, Tokens.INT, Tokens.STRING, Tokens.BOOLEAN);
         if(tokens.contains(getLookaheadType(1))){
             switch (getLookaheadType(1)){
@@ -142,7 +141,10 @@ public class Parser {
             return new UnaryPositive(match(getLookaheadType(1)), factor());
         }else if(getLookaheadType(1) == Tokens.MINUS){
             return new UnaryNegative(match(getLookaheadType(1)), factor());
-        }else if(getLookaheadType(1) == Tokens.ID){
+        }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
+            return resolutionObject();
+        }
+        else if(getLookaheadType(1) == Tokens.ID){
             return new ID(match(getLookaheadType(1)));
         }
         else if(getLookaheadType(1) == Tokens.NOT){
@@ -246,7 +248,7 @@ public class Parser {
         if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS)
             member = functionCall().id; // get function name
         else member = new ID(match(Tokens.ID));
-        match(Tokens.SEMICOLON);
+        //match(Tokens.SEMICOLON);
         return new ResolutionObject(type, member);
     }
 

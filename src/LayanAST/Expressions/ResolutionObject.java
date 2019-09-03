@@ -4,7 +4,7 @@ import LayanAST.Declarations.ID;
 import LayanAST.LayanAST;
 import Tokens.Token;
 
-public class ResolutionObject extends LayanAST {
+public class ResolutionObject extends ExprNode {
     public ID type;
     public ID member;
 

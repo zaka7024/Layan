@@ -33,9 +33,6 @@ parameters: declaration_stat (',' declaration_stat)*
 
 resolution_object: ID ('.' (ID | function_call)) ';'
 
-//TODO:: Check this class A{} A a; int x = 2 + a;
-//TODO:: Promotion for function call args
-//TODO:: Function call in expression
 //TODO:: Compute evalType member access
 //TODO:: add member access in the expression rule
 

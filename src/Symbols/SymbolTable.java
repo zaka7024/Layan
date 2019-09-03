@@ -57,8 +57,8 @@ public class SymbolTable {
 
     public Symbol resolve(LayanAST node){
         Symbol symbol = ((ID)node).scope.resolve(((ID) node).name.text);
-        if(symbol.def == null){
-            System.out.println("must be predefined symbol");
+        if(symbol == null || symbol.def == null){
+            throw new Error("must be predefined symbol " + ((ID) node).name.text);
         }
         int refPosition = node.token.tokenIndex;
         int defPosition = ((Symbol)symbol).def.token.tokenIndex;

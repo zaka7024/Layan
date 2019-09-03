@@ -91,6 +91,7 @@ public class ASTVisitorDefine {
 
     private void walkAssignment(EqualNode node){
         node.id.scope = currentScope;
+        walk(node.expression);
     }
 
     private void walkVariableDeclarationList(VariableDeclarationList node){
@@ -100,6 +101,7 @@ public class ASTVisitorDefine {
 
     private void walkResolutionObject(ResolutionObject node){
         node.type.scope = currentScope;
+        node.member.scope = currentScope;
     }
 
     private void walkObjectDeclaration(ObjectDeclaration node){
@@ -115,7 +117,7 @@ public class ASTVisitorDefine {
 
     private void walkMethodDeclaration(MethodDeclaration node){
         System.out.println(node.toStringNode());
-        MethodSymbol methodSymbol = new MethodSymbol(node.id.name.text, null, currentScope, node);
+        MethodSymbol methodSymbol = new MethodSymbol(node.id.name.text, new BuiltInTypeSymbol("void"), currentScope, node);
         currentScope.define(methodSymbol);
         // push scope(parameters scope) in the tree scope
         currentScope = methodSymbol;

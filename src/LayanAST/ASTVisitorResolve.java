@@ -107,6 +107,10 @@ public class ASTVisitorResolve {
         node.type.evalType = node.type.scope.resolveMember(node.type.name.text).evalType;
         Symbol member = ((ClassSymbol)objectSymbol.type).scope.resolveMember(node.member.name.text);
         symbolTable.memberAccess(node);
+        node.member.symbol = member;
+        node.member.type = member.type;
+        node.member.evalType = member.evalType;
+        node.evalType = node.member.evalType;
         System.out.println("ref: " + (node.member.name.text + " -> " + (member)));
     }
 
