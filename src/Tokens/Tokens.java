@@ -40,6 +40,7 @@ public final class Tokens {
     public static final int INT = 35;
     public static final int FLOAT = 36;
     public static final int PRINT = 37;
+    public static final int RETURN = 38;
 
 public static String getTokenName(int type){
     switch (type){

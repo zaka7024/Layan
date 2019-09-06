@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 // Recursive Descent Lexer LL(1).
 public class Lexer {
-    private String input; // layan code.txt.
+    private String input; // layan code.layan.
     private int index; // current input index.
     private char currentChar;
     private HashMap<String, Token> keywords = new HashMap<String, Token>(); // represent the preserved
@@ -23,6 +23,7 @@ public class Lexer {
 
     private void initKeywords(){//map each keyword with it's token
         keywords.put("function", new Token("function", Tokens.FUNCTION));
+        keywords.put("return", new Token("return", Tokens.RETURN));
         keywords.put("class", new Token("class", Tokens.CLASS));
         keywords.put("if", new Token("if", Tokens.IF));
         keywords.put("else", new Token("else", Tokens.ELSE));
@@ -42,7 +43,7 @@ public class Lexer {
             currentChar = input.charAt(index);
             return;
         }
-        currentChar = (char)-1; // to know if we hit the end of the code.txt.
+        currentChar = (char)-1; // to know if we hit the end of the code.layan.
     }
 
     private char peek(){

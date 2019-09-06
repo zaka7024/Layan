@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         FileReader fileReader = null;
         try {
-            fileReader = new FileReader("C:\\Users\\HP\\IdeaProjects\\Layan\\src\\code.txt");
+            fileReader = new FileReader("C:\\Users\\HP\\IdeaProjects\\Layan\\src\\code.layan");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

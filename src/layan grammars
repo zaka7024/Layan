@@ -23,6 +23,10 @@ method_declaration: 'function' ID '(' parameters? ')' block
 block: '{' function_statements '}'
 parameters: declaration_stat (',' declaration_stat)*
 function_statements: declaration_stat | if_statement | while_statement | for_statement
+ | print_statement | return_statement
+
+return_statement:
+'return' ';'
 
 class_declaration: 'class' ID (':' TYPE) block
 block: '{'class_statements'}'

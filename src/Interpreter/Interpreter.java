@@ -32,6 +32,7 @@ public class Interpreter {
             case Tokens.PROGRAM: walkProgram((Program) root); break;
             case Tokens.ID: return walkID(root);
             case Tokens.PRINT: print((Print) root); break;
+            case Tokens.RETURN: _return((ReturnNode) root); break;
             case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
             case Tokens.EQUAL: walkAssignment((EqualNode) root); break;
             case Tokens.PLUS: return walkAddNode((AddNode) root);
@@ -63,6 +64,10 @@ public class Interpreter {
         System.out.println(value);
     }
 
+    private void _return(ReturnNode node){
+        throw new Error("return");
+    }
+
     private Object walkID(LayanAST node){
         if(node instanceof ID){
             return currentSpace.get(((ID) node).name.text);
@@ -86,7 +91,10 @@ public class Interpreter {
             currentSpace.put(name, execute(call.args.get(i++)));
         }
 
-        walkBlock(symbol.functionBlock);
+        try{
+            walkBlock(symbol.functionBlock);
+        }catch (Error ex){
+        }
         callStack.pop();
         currentSpace = previousSpace;
     }

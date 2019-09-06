@@ -262,10 +262,16 @@ public class Parser {
         return new ResolutionObject(type, member);
     }
 
+    private ReturnNode returnStatement(){
+        Token token = match(Tokens.RETURN);
+        match(Tokens.SEMICOLON);
+        return new ReturnNode(token);
+    }
+
     private List<LayanAST> functionStatements(){ // set of statements that can be inside the
         // function declaration
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.IF,
-                Tokens.FOR, Tokens.WHILE, Tokens.PRINT);
+                Tokens.FOR, Tokens.WHILE, Tokens.PRINT, Tokens.RETURN);
         List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.ID);
         List<LayanAST> layanASTList = new ArrayList<LayanAST>();
         while (tokens.contains(getLookaheadType(1))){
@@ -283,6 +289,9 @@ public class Parser {
                 layanASTList.add(iterationStatement());
             }else if(getLookaheadType(1) == Tokens.PRINT){
                 layanASTList.add(printStatement());
+            }
+            else if(getLookaheadType(1) == Tokens.RETURN){
+                layanASTList.add(returnStatement());
             }else{
                 throw new Error("Syntax Error");
             }
