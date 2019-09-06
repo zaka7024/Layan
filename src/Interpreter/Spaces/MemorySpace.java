@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemorySpace {
-    private Map<String, Object> entities;
-    private String name;
+    public Map<String, Object> entities;
+    public String name;
 
     public MemorySpace(){
 

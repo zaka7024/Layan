@@ -272,7 +272,7 @@ public class Parser {
             if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
                 layanASTList.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
-                methodCall();
+                layanASTList.add(functionCallStatement());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
                 resolutionObject();
             }else if(declarationTokens.contains(getLookaheadType(1))){
@@ -282,7 +282,7 @@ public class Parser {
             }else if(getLookaheadType(1) == Tokens.FOR){
                 layanASTList.add(iterationStatement());
             }else if(getLookaheadType(1) == Tokens.PRINT){
-                printStatement();
+                layanASTList.add(printStatement());
             }else{
                 throw new Error("Syntax Error");
             }
@@ -317,7 +317,7 @@ public class Parser {
         return expr();
     }
 
-    private void methodCall(){
+    private void methodCall(){//TODO:: Delete this code
         //ID '(' (expr ',')'* ')' ';'
         match(Tokens.ID);
         match(Tokens.OPENPARENTHESIS);

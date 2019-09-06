@@ -1,5 +1,6 @@
 package Symbols;
 
+import LayanAST.Declarations.BlockNode;
 import LayanAST.LayanAST;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ public class MethodSymbol extends Symbol implements Scope{
 
     public Map<String, Symbol> parameters = new HashMap<>();
     private Scope enclosingScope;
+    public BlockNode functionBlock;
 
     public MethodSymbol(String name, Type type, Scope cs, LayanAST def){
         super(name, type, def, cs);

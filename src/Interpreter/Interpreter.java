@@ -1,15 +1,13 @@
 package Interpreter;
-import LayanAST.Declarations.ID;
+import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.Program;
 import Interpreter.Spaces.FunctionSpace;
 import Interpreter.Spaces.MemorySpace;
-import LayanAST.Declarations.VariableDeclaration;
-import LayanAST.Declarations.VariableDeclarationList;
 import LayanAST.LayanAST;
 import LayanAST.Print;
 import Symbols.BuiltInTypeSymbol;
-import Symbols.Symbol;
+import Symbols.MethodSymbol;
 import Tokens.Tokens;
 
 import java.util.Stack;
@@ -25,7 +23,7 @@ public class Interpreter {
         globalSpace = new MemorySpace("globals"); // define global space for global vars, classes,
         // and functions
         currentSpace = globalSpace;
-
+        callStack = new Stack<>();
         execute(root);
     }
 
@@ -38,10 +36,12 @@ public class Interpreter {
             case Tokens.EQUAL: walkAssignment((EqualNode) root); break;
             case Tokens.PLUS: return walkAddNode((AddNode) root);
             case Tokens.MINUS: return walkMinusNode((SubtractionNode) root);
+            case Tokens.MULTIPLICATION: return walkMultiplicationNode((MultiplicationNode) root);
+            case Tokens.DIVISION: return walkDivisionNode((DivisionNode) root);
             case Tokens.INT: return Integer.parseInt(root.token.text);
             case Tokens.FLOAT: return Float.parseFloat(root.token.text);
             case Tokens.STRING: return walkStringNode((StringNode) root);
-            default: throw new Error("Unhandled Node type");
+
         }
         return null;
     }
@@ -66,8 +66,35 @@ public class Interpreter {
     private Object walkID(LayanAST node){
         if(node instanceof ID){
             return currentSpace.get(((ID) node).name.text);
+        }else if(node instanceof FunctionCall){
+            call((FunctionCall) node);
         }
         return null;
+    }
+
+    private void call(FunctionCall call){
+        MethodSymbol symbol = (MethodSymbol) call.id.symbol;
+
+        FunctionSpace functionSpace = new FunctionSpace(symbol);
+        callStack.push(functionSpace);
+        MemorySpace previousSpace = currentSpace;
+        currentSpace = functionSpace;
+
+        // pass the args
+        int i = 0;
+        for(String name: symbol.parameters.keySet()){
+            currentSpace.put(name, execute(call.args.get(i++)));
+        }
+
+        walkBlock(symbol.functionBlock);
+        callStack.pop();
+        currentSpace = previousSpace;
+    }
+
+    private void walkBlock(BlockNode node){
+        for(LayanAST statement: node.layanASTList){
+            execute(statement);
+        }
     }
 
     private void walkVariableDeclarationList(VariableDeclarationList node){
@@ -76,7 +103,11 @@ public class Interpreter {
     }
 
     private void walkVariableDeclaration(VariableDeclaration node){
-        currentSpace.put(node.id.name.text, node.expression);
+        Object value = null;
+        if(node.expression != null){
+            value = execute(node.expression);
+        }
+        currentSpace.put(node.id.name.text, value);
     }
 
     private void walkAssignment(EqualNode node){
@@ -140,6 +171,30 @@ public class Interpreter {
                     Integer.parseInt(execute(node.right).toString()) + "");
         }else{ // string
             throw new Error("Unsupported operand types for -");
+        }
+    }
+
+    private Object walkMultiplicationNode(MultiplicationNode node){
+        if(((BuiltInTypeSymbol)node.evalType).typeIndex == 4){ // float
+            return cast(node, (Float.parseFloat(execute(node.left).toString()) *
+                    Float.parseFloat(execute(node.right).toString())) + "");
+        }else if(((BuiltInTypeSymbol)node.evalType).typeIndex == 3) { //int
+            return cast(node, Integer.parseInt(execute(node.left).toString()) *
+                    Integer.parseInt(execute(node.right).toString()) + "");
+        }else{ // string
+            throw new Error("Unsupported operand types for *");
+        }
+    }
+
+    private Object walkDivisionNode(DivisionNode node){
+        if(((BuiltInTypeSymbol)node.evalType).typeIndex == 4){ // float
+            return cast(node, (Float.parseFloat(execute(node.left).toString()) /
+                    Float.parseFloat(execute(node.right).toString())) + "");
+        }else if(((BuiltInTypeSymbol)node.evalType).typeIndex == 3) { //int
+            return cast(node, Integer.parseInt(execute(node.left).toString()) /
+                    Integer.parseInt(execute(node.right).toString()) + "");
+        }else{ // string
+            throw new Error("Unsupported operand types for *");
         }
     }
 

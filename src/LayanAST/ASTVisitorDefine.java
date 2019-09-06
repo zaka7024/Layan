@@ -135,7 +135,11 @@ public class ASTVisitorDefine {
         // push local scope
         LocalScope localScope = new LocalScope(currentScope);
         currentScope = localScope;
+
         walk(node.block);
+
+        // set the block to this method symbol
+        methodSymbol.functionBlock = node.block;
 
         System.out.println(currentScope);
         currentScope = currentScope.getEnclosingScope(); // pop block scope
