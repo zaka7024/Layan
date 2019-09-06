@@ -138,8 +138,8 @@ public class Lexer {
         StringBuilder string = new StringBuilder();
         string.append("\"");
         for(; index < input.length() - 1; consume()){
-            string.append(currentChar);
             if(currentChar == '"') break;
+            string.append(currentChar);
         }
         match('"');
         string.append("\"");

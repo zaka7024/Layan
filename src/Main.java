@@ -1,3 +1,4 @@
+import Interpreter.Interpreter;
 import LayanAST.ASTVisitor;
 import LayanAST.ASTVisitorDefine;
 import LayanAST.ASTVisitorResolve;
@@ -31,5 +32,6 @@ public class Main {
         LayanAST ast = parser.parse();
         ASTVisitorDefine visitor = new ASTVisitorDefine(ast);
         ASTVisitorResolve visitorResolve = new ASTVisitorResolve(ast);
+        Interpreter interpreter = new Interpreter(ast);
     }
 }

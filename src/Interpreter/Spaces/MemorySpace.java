@@ -6,6 +6,11 @@ import java.util.Map;
 public class MemorySpace {
     private Map<String, Object> entities;
     private String name;
+
+    public MemorySpace(){
+
+    }
+
     public MemorySpace(String n){
         entities = new HashMap<>();
         this.name = n;
@@ -15,7 +20,7 @@ public class MemorySpace {
         entities.put(name, value);
     }
 
-    public void get(String name){
-        entities.get(name);
+    public Object get(String name){
+        return entities.get(name);
     }
 }

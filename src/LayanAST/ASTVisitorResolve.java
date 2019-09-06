@@ -190,6 +190,8 @@ public class ASTVisitorResolve {
         walk(addNode.left);
         walk(addNode.right);
         addNode.evalType = symbolTable.bop(addNode.left, addNode.right);
+        symbolTable.assign(addNode, addNode.left);
+        symbolTable.assign(addNode, addNode.right);
         System.out.println(addNode.toStringNode());
     }
 
