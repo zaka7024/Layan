@@ -1,4 +1,5 @@
 package Interpreter;
+import LayanAST.Conditions.ConditionNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.Program;
@@ -42,6 +43,12 @@ public class Interpreter {
             case Tokens.INT: return Integer.parseInt(root.token.text);
             case Tokens.FLOAT: return Float.parseFloat(root.token.text);
             case Tokens.STRING: return walkStringNode((StringNode) root);
+            case Tokens.BOOLEAN: return walkBoolNode((BoolNode) root);
+            case Tokens.IF:
+            case Tokens.WHILE:
+                walkConditionNode((ConditionNode) root); break;
+            case Tokens.OPENCARLYBRACKET:
+                walkBlock((BlockNode) root);
 
         }
         return null;
@@ -227,5 +234,24 @@ public class Interpreter {
         }
 
         return node.token.text;
+    }
+
+    private Object walkBoolNode(BoolNode node){
+        return node.token.text;
+    }
+
+    private void walkConditionNode(ConditionNode node){
+        String _switch = execute(node.expression).toString();
+        if(node.token.text == "if"){
+            if(_switch.compareTo("true") == 0){
+                execute(node.truePart);
+            }else{
+                execute(node.falsePart);
+            }
+        }else{ // while statement
+            while (_switch.compareTo("true") == 0){
+                execute(node.truePart);
+            }
+        }
     }
 }

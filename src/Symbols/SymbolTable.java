@@ -141,7 +141,7 @@ public class SymbolTable {
     }
 
     public void condition(ConditionNode conditionNode){
-        if(conditionNode.expression.evalType != _boolean){
+        if(((BuiltInTypeSymbol)conditionNode.expression.evalType).typeIndex != 1){
             throw new Error("condition statements must have boolean type");
         }
     }
