@@ -20,6 +20,7 @@ public class ASTVisitorResolve {
             case Tokens.PROGRAM: walkProgram((Program) root); break;
             case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
             case Tokens.ID: walkID(root); break;
+            case Tokens.PRINT: walkPrint((Print) root); break;
             case Tokens.IF:
             case Tokens.WHILE:
                 walkConditionNode((ConditionNode) root); break;
@@ -56,6 +57,10 @@ public class ASTVisitorResolve {
         for(LayanAST node: blockNode.layanASTList){
             walk(node);
         }
+    }
+
+    private void walkPrint(Print print){
+        walk(print.exprNode);
     }
 
     private void walkFunctionCall(FunctionCall node){

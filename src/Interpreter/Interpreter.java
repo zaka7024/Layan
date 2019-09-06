@@ -1,4 +1,5 @@
 package Interpreter;
+import LayanAST.Declarations.ID;
 import LayanAST.Expressions.*;
 import LayanAST.Program;
 import Interpreter.Spaces.FunctionSpace;
@@ -6,6 +7,7 @@ import Interpreter.Spaces.MemorySpace;
 import LayanAST.Declarations.VariableDeclaration;
 import LayanAST.Declarations.VariableDeclarationList;
 import LayanAST.LayanAST;
+import LayanAST.Print;
 import Symbols.BuiltInTypeSymbol;
 import Symbols.Symbol;
 import Tokens.Tokens;
@@ -30,6 +32,8 @@ public class Interpreter {
     private Object execute(LayanAST root){
         switch (root.token.type){
             case Tokens.PROGRAM: walkProgram((Program) root); break;
+            case Tokens.ID: return walkID(root);
+            case Tokens.PRINT: print((Print) root); break;
             case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
             case Tokens.EQUAL: walkAssignment((EqualNode) root); break;
             case Tokens.PLUS: return walkAddNode((AddNode) root);
@@ -54,6 +58,18 @@ public class Interpreter {
         }
     }
 
+    private void print(Print print){
+        Object value = execute(print.exprNode);
+        System.out.println(value);
+    }
+
+    private Object walkID(LayanAST node){
+        if(node instanceof ID){
+            return currentSpace.get(((ID) node).name.text);
+        }
+        return null;
+    }
+
     private void walkVariableDeclarationList(VariableDeclarationList node){
         for(VariableDeclaration item: node.variableDeclarations)
             walkVariableDeclaration(item);
@@ -70,7 +86,6 @@ public class Interpreter {
         Object value = execute(node.expression);
         MemorySpace space = getSpaceWithSymbol(node.id.name.text);
         space.put(node.id.name.text, value);
-        System.out.println(node.id.name.text + ": " + currentSpace.get(node.id.name.text));
     }
 
     private Object cast(ExprNode node, String value){

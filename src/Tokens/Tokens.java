@@ -39,6 +39,7 @@ public final class Tokens {
     public static final int PROGRAM = 34;
     public static final int INT = 35;
     public static final int FLOAT = 36;
+    public static final int PRINT = 37;
 
 public static String getTokenName(int type){
     switch (type){
@@ -80,6 +81,7 @@ public static String getTokenName(int type){
         case PROGRAM:return "PROGRAM";
         case INT:return "integer";
         case FLOAT:return "floating";
+        case PRINT:return "print";
         default: return "Unknown Token";
         }
     }

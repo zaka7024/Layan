@@ -6,12 +6,11 @@ import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.LayanAST;
 import LayanAST.Program;
-import LayanAST.EOF;
+import LayanAST.Print;
 import Lexer.Lexer;
 import Symbols.BuiltInTypeSymbol;
 import Tokens.Token;
 import Tokens.Tokens;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -165,7 +164,7 @@ public class Parser {
     private Program statements(){ // function to determent which statement to parse using
         // lookahead buffer
         List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.FUNCTION, Tokens.CLASS,
-                Tokens.IF, Tokens.FOR, Tokens.WHILE);
+                Tokens.IF, Tokens.FOR, Tokens.WHILE, Tokens.PRINT);
         List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.ID, Tokens.CLASS, Tokens.FUNCTION);
 
         List<LayanAST> programStatements = new ArrayList<LayanAST>();
@@ -183,10 +182,21 @@ public class Parser {
                 programStatements.add(conditionStatements());
             }else if (getLookaheadType(1) == Tokens.FOR){
                 programStatements.add(iterationStatement());
+            }else if(getLookaheadType(1) == Tokens.PRINT){
+                programStatements.add(printStatement());
             }
         }
         //return new EOF(getLookaheadToken(1));
         return new Program(new Token("Program", Tokens.PROGRAM), programStatements);
+    }
+
+    private Print printStatement(){
+        Token token = match(Tokens.PRINT);
+        match(Tokens.OPENPARENTHESIS);
+        ExprNode exprNode = expr();
+        match(Tokens.CLOSEPARENTHESIS);
+        match(Tokens.SEMICOLON);
+        return new Print(token, exprNode);
     }
 
     private LayanAST declarationStatements(){ // rule represent the declaration statements include
@@ -254,7 +264,8 @@ public class Parser {
 
     private List<LayanAST> functionStatements(){ // set of statements that can be inside the
         // function declaration
-        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.IF, Tokens.FOR, Tokens.WHILE);
+        List<Integer> tokens = Arrays.asList(Tokens.ID, Tokens.TYPE, Tokens.IF,
+                Tokens.FOR, Tokens.WHILE, Tokens.PRINT);
         List<Integer> declarationTokens = Arrays.asList(Tokens.TYPE, Tokens.ID);
         List<LayanAST> layanASTList = new ArrayList<LayanAST>();
         while (tokens.contains(getLookaheadType(1))){
@@ -270,6 +281,8 @@ public class Parser {
                 layanASTList.add(conditionStatements());
             }else if(getLookaheadType(1) == Tokens.FOR){
                 layanASTList.add(iterationStatement());
+            }else if(getLookaheadType(1) == Tokens.PRINT){
+                printStatement();
             }else{
                 throw new Error("Syntax Error");
             }

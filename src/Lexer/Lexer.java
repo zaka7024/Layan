@@ -34,6 +34,7 @@ public class Lexer {
         keywords.put("float", new Token("float", Tokens.TYPE));
         keywords.put("string", new Token("string", Tokens.TYPE));
         keywords.put("bool", new Token("bool", Tokens.TYPE));
+        keywords.put("print", new Token("print", Tokens.PRINT));
     }
 
     private void consume(){ // move the pointer to the next char in the input stream.

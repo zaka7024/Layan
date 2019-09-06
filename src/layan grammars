@@ -53,3 +53,7 @@ operators:
 <, >, <=, >=, !=, ==, !, &&, ||, %
 function_call_stat: function_call ';'
 function_call: ID '(' ((expression) ',')'* ')'
+
+
+print_statement:
+'print' '(' expression ')' ';'
