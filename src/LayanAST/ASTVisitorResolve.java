@@ -225,15 +225,14 @@ public class ASTVisitorResolve {
     private void walkNotEqualNode(InequalityNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = symbolTable.relop(node.left, node.right);
-        symbolTable.eqop(node.right, node.left);
+        node.evalType = symbolTable.eqop(node.right, node.left);
         System.out.println(node.toStringNode());
     }
 
     private void walkEqualityNode(EqualityNode node){
         walk(node.left);
         walk(node.right);
-        node.evalType = symbolTable.relop(node.left, node.right);
+        node.evalType = symbolTable.eqop(node.right, node.left);
         System.out.println(node.toStringNode());
     }
 
@@ -294,6 +293,7 @@ public class ASTVisitorResolve {
         System.out.println(node.toStringNode());
         walk(node.expression);
         symbolTable.condition(node);
+
     }
 
     private void walkIterationNode(IterationNode node){

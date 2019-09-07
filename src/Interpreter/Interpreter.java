@@ -10,6 +10,8 @@ import LayanAST.Print;
 import Symbols.BuiltInTypeSymbol;
 import Symbols.MethodSymbol;
 import Tokens.Tokens;
+import com.sun.org.apache.xpath.internal.operations.And;
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.util.Stack;
 
@@ -45,8 +47,16 @@ public class Interpreter {
             case Tokens.STRING: return walkStringNode((StringNode) root);
             case Tokens.BOOLEAN: return walkBoolNode((BoolNode) root);
             case Tokens.IF:
-            case Tokens.WHILE:
-                walkConditionNode((ConditionNode) root); break;
+            case Tokens.WHILE: walkConditionNode((ConditionNode) root); break;
+            case Tokens.MORETHAN: return walkMoreThanNode((MoreThanNode) root);
+            case Tokens.LESSTHAN: return walkLessThanNode((LessThanNode) root);
+            case Tokens.MORETHANOREQUAL: return walkMoreThanOrEqualNode((MoreThanOrEqualNode)root);
+            case Tokens.LESSTHANOREQUAL: return walkLessThanOrEqualNode((LessThanOrEqualNode) root);
+            case Tokens.AND: return walkAndNode((AndNode) root);
+            case Tokens.OR: return walkOrNode((OrNode) root);
+            case Tokens.NOT: return walkNotNode((NotNode) root);
+            case Tokens.NOTEQUAL: return walkNotEqualNode((InequalityNode) root);
+            case Tokens.EQUALITY: return walkEqualityNodeNode((EqualityNode) root);
             case Tokens.OPENCARLYBRACKET:
                 walkBlock((BlockNode) root);
 
@@ -135,34 +145,37 @@ public class Interpreter {
     }
 
     private Object cast(ExprNode node, String value){
-        if(((BuiltInTypeSymbol)node.evalType).typeIndex == 2){
+        if(((BuiltInTypeSymbol)node.evalType).typeIndex == 2){ // string
             if(node.promoteToType != null
                     && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 3){
                 int result = 0;
-                String v = value;
-                for(int i=0;i<v.length();i++){
+                for(int i=0;i<value.length();i++){
                     result += (int) value.charAt(i);
                 }
                 return result;
-            }else if(node.promoteToType != null
-                    && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 4){
-                double result = 0;
-                String v = value;
-                for(int i=0;i<v.length();i++){
-                    result += (double) value.charAt(i);
+            }else{
+                float result = 0;
+                for(int i=0;i<value.length();i++){
+                    result += (float) value.charAt(i);
                 }
                 return result;
             }
-            return value;
-        }else{
+        }else if(((BuiltInTypeSymbol)node.evalType).typeIndex == 1){//boolean
+            float result = 0;
+            for(int i=0;i<value.length();i++){
+                result += (float) value.charAt(i);
+            }
+            return result;
+        }
+        else{ // int or float
             if(node.promoteToType != null && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 3){
                 return Integer.parseInt(value);
-            }else if(node.promoteToType != null && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 4){
+            }else if(node.promoteToType != null
+                    && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 4){
                 return Float.parseFloat(value);
-            }else{
-                return value;
             }
         }
+        return value;
     }
 
     private Object walkAddNode(AddNode node){
@@ -170,8 +183,8 @@ public class Interpreter {
             return cast(node, (Float.parseFloat(execute(node.left).toString()) +
                     Float.parseFloat(execute(node.right).toString())) + "");
         }else if(((BuiltInTypeSymbol)node.evalType).typeIndex == 3) { //int
-            return cast(node, Integer.parseInt(execute(node.left).toString()) +
-                    Integer.parseInt(execute(node.right).toString()) + "");
+            return Integer.parseInt(cast(node, Integer.parseInt(execute(node.left).toString()) +
+                    Integer.parseInt(execute(node.right).toString()) + "").toString());
         }else{ // string
             return cast(node,execute(node.left).toString() + execute(node.right).toString());
         }
@@ -214,42 +227,112 @@ public class Interpreter {
     }
 
     private Object walkStringNode(StringNode node){
+        String text = node.token.text.substring(1, node.token.text.length() - 1);
         //int
         if(node.promoteToType != null
                 && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 3){
             int result = 0;
-            String value = node.token.text.substring(1, node.token.text.length() - 1);
-            for(int i=0;i<value.length();i++){
-                result += (int) value.charAt(i);
+            for(int i=0;i<text.length();i++){
+                result += (int) text.charAt(i);
             }
             return result;
         }else if(node.promoteToType != null
                 && ((BuiltInTypeSymbol)node.promoteToType).typeIndex == 4){
             double result = 0;
-            String value = node.token.text.substring(1, node.token.text.length() - 1);
-            for(int i=0;i<value.length();i++){
-                result += (double) value.charAt(i);
+            for(int i=0;i<text.length();i++){
+                result += (double) text.charAt(i);
             }
             return result;
         }
 
-        return node.token.text;
+        return text;
     }
 
-    private Object walkBoolNode(BoolNode node){
-        return node.token.text;
+    private boolean walkBoolNode(BoolNode node){
+        return node.token.text.compareTo("true") == 0 ? true : false;
+    }
+
+    private boolean walkMoreThanNode(MoreThanNode node){
+        Object left = execute(node.left);
+        Object right = execute(node.right);
+        if(left instanceof String){
+            left = cast(node, left.toString());
+        }
+        if(right instanceof String){
+            right = cast(node, right.toString());
+        }
+        return (Float.parseFloat(left.toString())) > Float.parseFloat(right.toString());
+    }
+
+    private boolean walkLessThanNode(LessThanNode node){
+        Object left = execute(node.left);
+        Object right = execute(node.right);
+        if(left instanceof String){
+            left = cast(node, left.toString());
+        }
+        if(right instanceof String){
+            right = cast(node, right.toString());
+        }
+        return (Float.parseFloat(left.toString())) < Float.parseFloat(right.toString());
+    }
+
+    private boolean walkMoreThanOrEqualNode(MoreThanOrEqualNode node){
+        Object left = execute(node.left);
+        Object right = execute(node.right);
+        if(left instanceof String){
+            left = cast(node, left.toString());
+        }
+        if(right instanceof String){
+            right = cast(node, right.toString());
+        }
+        return (Float.parseFloat(left.toString())) >= Float.parseFloat(right.toString());
+    }
+
+    private boolean walkLessThanOrEqualNode(LessThanOrEqualNode node){
+        Object left = execute(node.left);
+        Object right = execute(node.right);
+        if(left instanceof String){
+            left = cast(node, left.toString());
+        }
+        if(right instanceof String){
+            right = cast(node, right.toString());
+        }
+        return (Float.parseFloat(left.toString())) <= Float.parseFloat(right.toString());
+    }
+
+    private boolean walkAndNode(AndNode node){
+        return (boolean)execute(node.left) && (boolean)execute(node.right);
+    }
+
+    private boolean walkOrNode(OrNode node){
+        return (boolean)execute(node.left) || (boolean)execute(node.right);
+    }
+
+    private boolean walkNotNode(NotNode node){
+        return !((boolean)execute(node.expression));
+    }
+
+    private boolean walkNotEqualNode(InequalityNode node){
+        return execute(node.left) != execute(node.right);
+    }
+
+    private boolean walkEqualityNodeNode(EqualityNode node){
+        return execute(node.left) == execute(node.right);
     }
 
     private void walkConditionNode(ConditionNode node){
-        String _switch = execute(node.expression).toString();
+        boolean _switch = (boolean)execute(node.expression); // boolean java to string
         if(node.token.text == "if"){
-            if(_switch.compareTo("true") == 0){
+            if(_switch){
                 execute(node.truePart);
-            }else{
+            }else if(node.falsePart != null){
                 execute(node.falsePart);
             }
         }else{ // while statement
-            while (_switch.compareTo("true") == 0){
+            if(_switch && node.falsePart != null){
+                execute(node.falsePart);
+            }
+            while (_switch){
                 execute(node.truePart);
             }
         }

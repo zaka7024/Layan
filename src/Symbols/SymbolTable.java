@@ -19,11 +19,11 @@ public class SymbolTable {
     public static final int floatType = 4;
     public static final int VOID = 5;
 
-    static final Type _int = new BuiltInTypeSymbol("int");
-    static final Type _boolean = new BuiltInTypeSymbol("bool");
-    static final Type _string = new BuiltInTypeSymbol("string");
-    static final Type _float = new BuiltInTypeSymbol("float");
-    static final Type _void = new BuiltInTypeSymbol("void");
+    static final BuiltInTypeSymbol _int = new BuiltInTypeSymbol("int");
+    static final BuiltInTypeSymbol _boolean = new BuiltInTypeSymbol("bool");
+    static final BuiltInTypeSymbol _string = new BuiltInTypeSymbol("string");
+    static final BuiltInTypeSymbol _float = new BuiltInTypeSymbol("float");
+    static final BuiltInTypeSymbol _void = new BuiltInTypeSymbol("void");
 
     public static Type[][] arithmeticResultType = new Type[][]{
                     /*  class         boolean     string      int         float       void*/
@@ -36,13 +36,13 @@ public class SymbolTable {
     };
 
     public static Type[][] comparisonType = new Type[][]{
-            /*class boolean string int float void*/
-            /*class*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean},
-            /*boolean*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean},
-            /*string*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean},
-            /*int*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean},
-            /*float*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean},
-            /*void*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _boolean}
+            /*          class boolean string int float void*/
+            /*class*/ {_void, _boolean, _boolean, _boolean, _boolean, _void},
+            /*boolean*/ {_void, _boolean, _boolean, _boolean, _boolean, _void},
+            /*string*/ {_void, _boolean, _boolean, _boolean, _boolean, _void},
+            /*int*/ {_void, _boolean, _boolean, _boolean, _boolean, _void},
+            /*float*/ {_void, _boolean, _boolean, _boolean, _boolean, _void},
+            /*void*/ {_boolean, _boolean, _boolean, _boolean, _boolean, _void}
     };
 
     public static Type[][] promoteFromTo = new Type[][]{
@@ -148,7 +148,7 @@ public class SymbolTable {
 
     public Type unaryNot(NotNode a){
         // check if there is a void type
-        if(a.evalType != _boolean){
+        if(((BuiltInTypeSymbol)a.expression.evalType).typeIndex != _boolean.typeIndex){
             throw new Error(a.token.text + " must be a boolean");
         }
         return _boolean;
