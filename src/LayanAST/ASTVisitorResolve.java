@@ -64,8 +64,7 @@ public class ASTVisitorResolve {
     }
 
     private void walkFunctionCall(FunctionCall node){
-        MethodSymbol methodSymbol = (MethodSymbol) node.id.scope.resolve(node.id.name.text);
-        node.id.symbol = methodSymbol;
+        node.id.symbol = (MethodSymbol) node.id.scope.resolve(node.id.name.text);
         for(LayanAST item: node.args)
             walk(item); // compute static expression types
         // promote the args type
@@ -292,6 +291,8 @@ public class ASTVisitorResolve {
     private void walkConditionNode(ConditionNode node){
         System.out.println(node.toStringNode());
         walk(node.expression);
+        walk(node.truePart);
+        if(node.falsePart != null) walk(node.falsePart);
         symbolTable.condition(node);
 
     }

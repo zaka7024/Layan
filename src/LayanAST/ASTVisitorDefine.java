@@ -65,6 +65,10 @@ public class ASTVisitorDefine {
     private void walkFunctionCall(FunctionCall node){
         System.out.println(node.toStringNode());
         node.id.scope = currentScope;
+        // define all args
+        for(LayanAST arg: node.args){
+            walk(arg);
+        }
     }
 
     private Symbol walkVariableDeclaration(VariableDeclaration node){
@@ -133,8 +137,7 @@ public class ASTVisitorDefine {
         for (LayanAST arg: node.parameters)
             currentScope.define(walkVariableDeclaration((VariableDeclaration) arg));
         // push local scope
-        LocalScope localScope = new LocalScope(currentScope);
-        currentScope = localScope;
+        currentScope = new LocalScope(currentScope);
 
         walk(node.block);
 
@@ -200,9 +203,10 @@ public class ASTVisitorDefine {
         }
     }
 
-    private void walkSubtractionNode(LayanAST addNode){
-        if(addNode == null) return;
-        System.out.println(addNode.toStringNode());
+    private void walkSubtractionNode(SubtractionNode node){
+        if(node == null) return;
+        walk(node.left);
+        walk(node.right);
     }
 
     private void walkAndNode(AndNode node){
@@ -264,7 +268,8 @@ public class ASTVisitorDefine {
 
     private void walkConditionNode(ConditionNode node){
         walk(node.expression);
-
+        walk(node.truePart);
+        if(node.falsePart != null) walk(node.truePart);
     }
 
     private void walkIterationNode(IterationNode node){

@@ -67,9 +67,9 @@ public class Interpreter {
     }
 
     private MemorySpace getSpaceWithSymbol(String id){
-        if(globalSpace.get(id) != null) return globalSpace;
-        else return null;
-        //TODO:: call stack
+        if(!callStack.empty() && callStack.peek().get(id) != null) return callStack.peek();
+        else if(globalSpace.get(id) != null) return globalSpace;
+        return null; //TODO:: thr Exception
     }
 
     private void walkProgram(Program program){
@@ -100,15 +100,16 @@ public class Interpreter {
         MethodSymbol symbol = (MethodSymbol) call.id.symbol;
 
         FunctionSpace functionSpace = new FunctionSpace(symbol);
-        callStack.push(functionSpace);
         MemorySpace previousSpace = currentSpace;
-        currentSpace = functionSpace;
 
         // pass the args
         int i = 0;
         for(String name: symbol.parameters.keySet()){
-            currentSpace.put(name, execute(call.args.get(i++)));
+            functionSpace.put(name, execute(call.args.get(i++)));
         }
+
+        callStack.push(functionSpace);
+        currentSpace = functionSpace;
 
         try{
             walkBlock(symbol.functionBlock);
@@ -293,12 +294,12 @@ public class Interpreter {
     private boolean walkLessThanOrEqualNode(LessThanOrEqualNode node){
         Object left = execute(node.left);
         Object right = execute(node.right);
-        if(left instanceof String){
+        /*if(left instanceof String){//TODO:: resolve this
             left = cast(node, left.toString());
         }
         if(right instanceof String){
             right = cast(node, right.toString());
-        }
+        }*/
         return (Float.parseFloat(left.toString())) <= Float.parseFloat(right.toString());
     }
 
@@ -336,6 +337,7 @@ public class Interpreter {
             }
             while (_switch){
                 execute(node.truePart);
+                _switch = (boolean)execute(node.expression);
             }
         }
     }
