@@ -46,6 +46,7 @@ block: '{' function_statements '}'
 while_statement: 'while' '(' boolean_expression ')' block
 block: '{' function_statements '}'
 
+//TODO:: separate the scope of for and global into 2 scopes
 for_statement: 'for' '(' variable_declaration ';' boolean_expression; statement')' block
 stat:statements
 statement: assignment_stat

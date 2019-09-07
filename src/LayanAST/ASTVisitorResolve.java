@@ -297,6 +297,9 @@ public class ASTVisitorResolve {
     }
 
     private void walkIterationNode(IterationNode node){
-        System.out.println(node.toStringNode());
+        walkVariableDeclaration(node.forVariable);
+        walk(node.expression);
+        walk(node.assignment);
+        walk(node.blockNode);
     }
 }

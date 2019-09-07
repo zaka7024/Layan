@@ -1,5 +1,6 @@
 package Interpreter;
 import LayanAST.Conditions.ConditionNode;
+import LayanAST.Conditions.IterationNode;
 import LayanAST.Declarations.*;
 import LayanAST.Expressions.*;
 import LayanAST.Program;
@@ -48,6 +49,7 @@ public class Interpreter {
             case Tokens.BOOLEAN: return walkBoolNode((BoolNode) root);
             case Tokens.IF:
             case Tokens.WHILE: walkConditionNode((ConditionNode) root); break;
+            case Tokens.FOR: walkIterationNode((IterationNode) root); break;
             case Tokens.MORETHAN: return walkMoreThanNode((MoreThanNode) root);
             case Tokens.LESSTHAN: return walkLessThanNode((LessThanNode) root);
             case Tokens.MORETHANOREQUAL: return walkMoreThanOrEqualNode((MoreThanOrEqualNode)root);
@@ -335,6 +337,15 @@ public class Interpreter {
             while (_switch){
                 execute(node.truePart);
             }
+        }
+    }
+
+    private void walkIterationNode(IterationNode node){
+        walkVariableDeclaration((VariableDeclaration) node.forVariable);
+
+        for(Object i = currentSpace.get(node.forVariable.type.name.text);
+            (boolean) execute(node.expression); execute(node.assignment)){
+            execute(node.blockNode);
         }
     }
 }
