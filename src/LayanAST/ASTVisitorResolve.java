@@ -115,7 +115,7 @@ public class ASTVisitorResolve {
         node.member.type = member.type;
         node.member.evalType = member.evalType;
         node.evalType = node.member.evalType;
-        System.out.println("ref: " + (node.member.name.text + " -> " + (member)));
+        System.out.println("ref from class: " + (node.member.name.text + " -> " + (member)));
     }
 
     private void walkObjectDeclaration(ObjectDeclaration node){
@@ -162,9 +162,9 @@ public class ASTVisitorResolve {
     }
 
     private void walkMultiplicationNode(MultiplicationNode node){
-        node.evalType = symbolTable.bop(node.left, node.right);
         walk(node.left);
         walk(node.right);
+        node.evalType = symbolTable.bop(node.left, node.right);
         System.out.println(node.toStringNode());
     }
 

@@ -1,4 +1,5 @@
 package Interpreter;
+import Interpreter.Spaces.ClassSpace;
 import LayanAST.Conditions.ConditionNode;
 import LayanAST.Conditions.IterationNode;
 import LayanAST.Declarations.*;
@@ -9,6 +10,7 @@ import Interpreter.Spaces.MemorySpace;
 import LayanAST.LayanAST;
 import LayanAST.Print;
 import Symbols.BuiltInTypeSymbol;
+import Symbols.ClassSymbol;
 import Symbols.MethodSymbol;
 import Tokens.Tokens;
 import com.sun.org.apache.xpath.internal.operations.And;
@@ -47,6 +49,8 @@ public class Interpreter {
             case Tokens.FLOAT: return Float.parseFloat(root.token.text);
             case Tokens.STRING: return walkStringNode((StringNode) root);
             case Tokens.BOOLEAN: return walkBoolNode((BoolNode) root);
+            case Tokens.CLASS: walkClassDeclaration((ClassDeclaration) root); break;
+            case Tokens.FUNCTION: walkMethodDeclaration((MethodDeclaration) root); break;
             case Tokens.IF:
             case Tokens.WHILE: walkConditionNode((ConditionNode) root); break;
             case Tokens.FOR: walkIterationNode((IterationNode) root); break;
@@ -68,8 +72,9 @@ public class Interpreter {
 
     private MemorySpace getSpaceWithSymbol(String id){
         if(!callStack.empty() && callStack.peek().get(id) != null) return callStack.peek();
-        else if(globalSpace.get(id) != null) return globalSpace;
-        return null; //TODO:: thr Exception
+        //else if(globalSpace.get(id) != null) return globalSpace;
+        return globalSpace; //TODO:: thr Exception
+
     }
 
     private void walkProgram(Program program){
@@ -89,9 +94,13 @@ public class Interpreter {
 
     private Object walkID(LayanAST node){
         if(node instanceof ID){
-            return currentSpace.get(((ID) node).name.text);
+            return getSpaceWithSymbol(((ID) node).name.text).get(((ID) node).name.text);
         }else if(node instanceof FunctionCall){
             call((FunctionCall) node);
+        }else if(node instanceof ObjectDeclaration){
+            walkObjectDeclaration((ObjectDeclaration) node);
+        }else if(node instanceof ResolutionObject){
+            return walkResolutionObject((ResolutionObject) node);
         }
         return null;
     }
@@ -136,6 +145,40 @@ public class Interpreter {
             value = execute(node.expression);
         }
         currentSpace.put(node.id.name.text, value);
+    }
+
+    private void walkMethodDeclaration(MethodDeclaration node){
+        currentSpace.put(node.id.name.text, node.id.symbol);
+    }
+
+    private void walkClassDeclaration(ClassDeclaration node){
+        ClassSymbol classSymbol = (ClassSymbol) node.id.symbol;
+        //execute(((ClassDeclaration)classSymbol.def).block);
+    }
+
+    private void walkObjectDeclaration(ObjectDeclaration node){
+        ClassSymbol classSymbol = (ClassSymbol) node.type.symbol;
+        //TODO:: define class instance, resolve member, check if there is or not,...
+        ClassSpace classSpace = new ClassSpace(classSymbol);
+        currentSpace.put(node.id.name.text, classSpace);
+        MemorySpace previousSpace = currentSpace;
+        currentSpace = classSpace;
+        execute(((ClassDeclaration)classSymbol.def).block);
+        currentSpace = previousSpace;
+    }
+
+    private Object walkResolutionObject(ResolutionObject node){
+        MemorySpace previousSpace = currentSpace;
+        MemorySpace previousGlobal = globalSpace;
+        ClassSpace classSpace = (ClassSpace) currentSpace.get(node.type.name.text);
+        globalSpace = classSpace;
+        currentSpace = classSpace;
+        if(classSpace.get(node.member.name.text) instanceof MethodSymbol){
+            execute(node.functionCall);
+        }
+        globalSpace = previousGlobal;
+        currentSpace = previousSpace;
+        return classSpace.get(node.member.name.text);
     }
 
     private void walkAssignment(EqualNode node){

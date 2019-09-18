@@ -175,7 +175,7 @@ public class Parser {
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 programStatements.add(functionCallStatement());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
-                programStatements.add(resolutionObject());
+                programStatements.add(resolutionStatement());
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 programStatements.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
@@ -250,16 +250,28 @@ public class Parser {
         return new EqualNode(name, equalToken, exprNode);
     }
 
+    private ResolutionObject resolutionStatement(){
+        ResolutionObject resolutionObject = resolutionObject();
+        match(Tokens.SEMICOLON);
+        return resolutionObject;
+    }
+
     private ResolutionObject resolutionObject(){
+
         ID type = new ID(match(Tokens.ID));
         match(Tokens.DOT);
         ID member;
+        ResolutionObject resolutionObject;
         // function call member
-        if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS)
-            member = functionCall().id; // get function name
+        FunctionCall functionCall =  null;
+        if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
+            functionCall = functionCall();
+            member = functionCall.id; // get function name
+        }
         else member = new ID(match(Tokens.ID));
-        //match(Tokens.SEMICOLON);
-        return new ResolutionObject(type, member);
+        resolutionObject = new ResolutionObject(type, member);
+        resolutionObject.functionCall = functionCall;
+        return resolutionObject;
     }
 
     private ReturnNode returnStatement(){
@@ -280,7 +292,7 @@ public class Parser {
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 layanASTList.add(functionCallStatement());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
-                resolutionObject();
+                resolutionStatement();
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 layanASTList.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){
