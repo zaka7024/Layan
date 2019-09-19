@@ -1,0 +1,16 @@
+class Person{
+    string name;
+    int age;
+}
+
+class Student:Person{
+    function init(string n, int a){
+        name = n;
+        age = a;
+    }
+}
+
+Student s;
+s.init("zaka7024", 19);
+print(s.name);
+print(s.age);

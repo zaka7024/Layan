@@ -75,7 +75,7 @@ public class Interpreter {
         else{
             MemorySpace space = globalSpace;
             while (space != null){
-                if(space.get(id) != null) return space;
+                if(space.contains(id)) return space;
                 space = space.previousSpace;
             }
         }
@@ -121,7 +121,7 @@ public class Interpreter {
         // get args count
         int argsCount = call.args.size();
         if(argsCount != paramsCount) throw new Error("function " + call.id.name.text
-        + " get more or less args");
+        + " takes more or less args");
 
         // pass the args
         int i = 0;
@@ -172,11 +172,16 @@ public class Interpreter {
         ClassSymbol classSymbol = (ClassSymbol) node.type.symbol;
         //TODO:: define class instance, resolve member, check if there is or not,...
         ClassSpace classSpace = new ClassSpace(classSymbol);
-        currentSpace.put(node.id.name.text, classSpace);
         MemorySpace previousSpace = currentSpace;
-        currentSpace = classSpace;
+        currentSpace.put(node.id.name.text, classSpace);
+        classSpace.previousSpace = globalSpace;
+        globalSpace = classSpace;
+        currentSpace = globalSpace;
+
         execute(((ClassDeclaration)classSymbol.def).block);
+
         currentSpace = previousSpace;
+        globalSpace = classSpace.previousSpace;
     }
 
     private Object walkResolutionObject(ResolutionObject node){

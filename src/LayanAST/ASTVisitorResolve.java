@@ -110,6 +110,7 @@ public class ASTVisitorResolve {
         node.type.type = node.type.scope.resolve(node.type.name.text).type;
         node.type.evalType = node.type.scope.resolveMember(node.type.name.text).evalType;
         Symbol member = ((ClassSymbol)objectSymbol.type).scope.resolveMember(node.member.name.text);
+        if(member == null) throw new Error(node.member.name.text + " must be predefined");
         symbolTable.memberAccess(node);
         node.member.symbol = member;
         node.member.type = member.type;

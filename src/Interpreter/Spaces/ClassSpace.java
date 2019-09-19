@@ -12,5 +12,10 @@ public class ClassSpace extends MemorySpace {//class instance
     public ClassSpace(ClassSymbol cs){
         classSymbol = cs;
         entities = new HashMap<>();
+        if(classSymbol.superClass != null){
+            for(String filed: classSymbol.superClass.fields.keySet()){
+                entities.put(filed, "null");
+            }
+        }
     }
 }

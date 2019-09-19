@@ -24,4 +24,8 @@ public class MemorySpace {
     public Object get(String name){
         return entities.get(name);
     }
+
+    public boolean contains(String id){
+        return entities.containsKey(id);
+    }
 }
