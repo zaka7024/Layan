@@ -1,30 +1,11 @@
-string first = "global first";
 int x = 10;
-class DecorationPrinter{
-    string first, last;
-    int x = 3;
-    function init(string f, string l){
-        first = f;
-        last = l;
-    }
 
-    function put(string message){
-        if(x <= 0){
-            return;
-        }
-        print(first);
-        print(message);
-        print(last);
-        x = x - 1;
-        put(message);
+class A{
+    int x = 5;
+    function init(int x){
+        print(x);
     }
 }
 
-print(first);
-DecorationPrinter log;
-
-log.init("----", "----");
-
-log.put("hello, world");
-
-print(first);
+A a;
+a.init(1);

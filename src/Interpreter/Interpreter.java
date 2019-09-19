@@ -72,9 +72,14 @@ public class Interpreter {
 
     private MemorySpace getSpaceWithSymbol(String id){
         if(!callStack.empty() && callStack.peek().get(id) != null) return callStack.peek();
-        //else if(globalSpace.get(id) != null) return globalSpace;
-        return globalSpace; //TODO:: thr Exception
-
+        else{
+            MemorySpace space = globalSpace;
+            while (space != null){
+                if(space.get(id) != null) return space;
+                space = space.previousSpace;
+            }
+        }
+        return null;
     }
 
     private void walkProgram(Program program){
@@ -110,6 +115,13 @@ public class Interpreter {
 
         FunctionSpace functionSpace = new FunctionSpace(symbol);
         MemorySpace previousSpace = currentSpace;
+
+        // get params count
+        int paramsCount = symbol.parameters.size();
+        // get args count
+        int argsCount = call.args.size();
+        if(argsCount != paramsCount) throw new Error("function " + call.id.name.text
+        + " get more or less args");
 
         // pass the args
         int i = 0;
@@ -169,14 +181,14 @@ public class Interpreter {
 
     private Object walkResolutionObject(ResolutionObject node){
         MemorySpace previousSpace = currentSpace;
-        MemorySpace previousGlobal = globalSpace;
         ClassSpace classSpace = (ClassSpace) currentSpace.get(node.type.name.text);
-        globalSpace = classSpace;
         currentSpace = classSpace;
         if(classSpace.get(node.member.name.text) instanceof MethodSymbol){
+            classSpace.previousSpace = globalSpace;
+            globalSpace = classSpace;
             execute(node.functionCall);
+            globalSpace = classSpace.previousSpace;
         }
-        globalSpace = previousGlobal;
         currentSpace = previousSpace;
         return classSpace.get(node.member.name.text);
     }

@@ -6,6 +6,7 @@ import java.util.Map;
 public class MemorySpace {
     public Map<String, Object> entities;
     public String name;
+    public MemorySpace previousSpace;
 
     public MemorySpace(){
 
