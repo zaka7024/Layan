@@ -7,6 +7,7 @@ import Lexer.Lexer;
 import Parser.Parser;
 import Tokens.Token;
 import Tokens.Tokens;
+import edu.princeton.cs.algs4.StdDraw;
 
 import java.io.*;
 
@@ -26,6 +27,8 @@ public class Main {
         while ((temp = bufferedReader.readLine()) != null)
             stringBuilder.append(temp);
 
+        // StdDraw init
+        //StdDraw.setCanvasSize(1800,800);
 
         Lexer lexer = new Lexer(stringBuilder.toString());
         Parser parser = new Parser(lexer, 4);

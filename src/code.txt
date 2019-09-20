@@ -1,8 +1,11 @@
+
 class Drawable{
     function draw(){}
-    function setColor(){}
-    function setPenSize(){}
+
 }
+
+function setColor(){}
+function setPenSize(float size){}
 
 class Point: Drawable{
     float x = 0, y = 0;
@@ -13,9 +16,19 @@ class Square: Drawable{
     float length = 0.05;
 }
 
+class Rectangle: Drawable{
+    float x = 0.0, y = 0.0;
+    float width= 0.05, height = 0.05;
+}
+
 class Circle: Drawable{
     float x = 0.5, y = 0.5;
     float radius = 0.05;
+}
+
+class Line: Drawable{
+    Point a;
+    Point b;
 }
 
 class Text: Drawable{
@@ -45,6 +58,8 @@ class ArrayVisualizer{
         }
     }
 }
+
+setPenSize(0.005);
 
 ArrayVisualizer av;
 av.init(8);

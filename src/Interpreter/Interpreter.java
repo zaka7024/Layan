@@ -13,8 +13,6 @@ import Symbols.BuiltInTypeSymbol;
 import Symbols.ClassSymbol;
 import Symbols.MethodSymbol;
 import Tokens.Tokens;
-import com.sun.org.apache.xpath.internal.operations.And;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.Stack;
@@ -32,6 +30,8 @@ public class Interpreter {
         currentSpace = globalSpace;
         callStack = new Stack<>();
         execute(root);
+
+        // StdDraw init
     }
 
     private Object execute(LayanAST root){
@@ -135,6 +135,8 @@ public class Interpreter {
 
         if(symbol.name.compareTo("draw") == 0){
             Draw();
+        }else if(symbol.name.compareTo("setPenSize") == 0){
+            setPenSize(functionSpace);
         }
 
         try{
@@ -426,12 +428,19 @@ public class Interpreter {
 
     //
 
+    private void setPenSize(FunctionSpace space){
+        System.out.println("setPenSize");
+        float size = Float.parseFloat(space.get("size").toString());
+        System.out.println(size);
+        StdDraw.setPenRadius(size);
+    }
+
     private void Draw(){
-        StdDraw.setPenRadius(0.005);
         ClassSpace space = (ClassSpace) getSpaceWithSymbol("draw");
         switch (space.classSymbol.name){
             case "Point": drawPoint(space); break;
             case "Square": drawSquare(space); break;
+            case "Rectangle": drawRectangle(space); break;
             case "Circle": drawCircle(space); break;
             case "Text": drawText(space); break;
         }
@@ -455,6 +464,14 @@ public class Interpreter {
         float y = Float.parseFloat(space.get("y").toString());
         float radius = Float.parseFloat(space.get("radius").toString());
         StdDraw.circle(x, y, radius);
+    }
+
+    private void drawRectangle(ClassSpace space){
+        float x = Float.parseFloat(space.get("x").toString());
+        float y = Float.parseFloat(space.get("y").toString());
+        float width = Float.parseFloat(space.get("width").toString());
+        float height= Float.parseFloat(space.get("height").toString());
+        StdDraw.rectangle(x, y, width, height);
     }
 
     private void drawText(ClassSpace space){
