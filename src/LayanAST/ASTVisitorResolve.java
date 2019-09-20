@@ -96,9 +96,16 @@ public class ASTVisitorResolve {
         Symbol symbol = node.id.scope.resolve(node.id.name.text);
         node.id.symbol = symbol;
         walk(node.id);
+        if(node.member != null){
+            if(node.member.member != null){
+                walkResolutionObject(node.member);
+            }
+        }
         walk(node.expression);
         // promote the expression type to left type
-        symbolTable.assign(node.id, node.expression);
+        if(node.member != null && node.member.member != null){
+            symbolTable.assign(node.member.member, node.expression);
+        }else symbolTable.assign(node.id, node.expression);
     }
 
     private void walkResolutionObject(ResolutionObject node){

@@ -15,6 +15,7 @@ import Symbols.MethodSymbol;
 import Tokens.Tokens;
 import com.sun.org.apache.xpath.internal.operations.And;
 import com.sun.org.apache.xpath.internal.operations.Or;
+import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.Stack;
 
@@ -132,6 +133,10 @@ public class Interpreter {
         callStack.push(functionSpace);
         currentSpace = functionSpace;
 
+        if(symbol.name.compareTo("draw") == 0){
+            Draw();
+        }
+
         try{
             walkBlock(symbol.functionBlock);
         }catch (Error ex){
@@ -203,6 +208,14 @@ public class Interpreter {
             throw new Error("undefined variable " + node.id.name.text);
         }
         Object value = execute(node.expression);
+        if(node.member != null && node.member.member != null) { // assign to member in object
+            // TODO:: Check if the member is a function
+            MemorySpace space  = getSpaceWithSymbol(node.member.type.name.text);
+            ((ClassSpace)(space.get(node.member.type.name.text))).put(
+                    node.member.member.name.text, value
+            );
+            return;
+        }
         MemorySpace space = getSpaceWithSymbol(node.id.name.text);
         space.put(node.id.name.text, value);
     }
@@ -409,5 +422,37 @@ public class Interpreter {
             (boolean) execute(node.expression); execute(node.assignment)){
             execute(node.blockNode);
         }
+    }
+
+    //
+
+    private void Draw(){
+        StdDraw.setPenRadius(0.01);
+        ClassSpace space = (ClassSpace) getSpaceWithSymbol("draw");
+        switch (space.classSymbol.name){
+            case "Point": drawPoint(space); break;
+            case "Square": drawSquare(space); break;
+            case "Circle": drawCircle(space); break;
+        }
+    }
+
+    private void drawPoint(ClassSpace space){
+        float x = Float.parseFloat(space.get("x").toString());
+        float y = Float.parseFloat(space.get("y").toString());
+        StdDraw.point(x, y);
+    }
+
+    private void drawSquare(ClassSpace space){
+        float x = Float.parseFloat(space.get("x").toString());
+        float y = Float.parseFloat(space.get("y").toString());
+        float length = Float.parseFloat(space.get("length").toString());
+        StdDraw.square(x, y, length);
+    }
+
+    private void drawCircle(ClassSpace space){
+        float x = Float.parseFloat(space.get("x").toString());
+        float y = Float.parseFloat(space.get("y").toString());
+        float radius = Float.parseFloat(space.get("radius").toString());
+        StdDraw.circle(x, y, radius);
     }
 }

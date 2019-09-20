@@ -100,6 +100,9 @@ public class ASTVisitorDefine {
 
     private void walkAssignment(EqualNode node){
         node.id.scope = currentScope;
+        if(node.member != null && node.member.member != null){
+            walkResolutionObject(node.member);
+        }
         walk(node.expression);
     }
 

@@ -1,13 +1,36 @@
 class Drawable{
-    function draw(){}
+    function draw(){
+        print("i am a draw function");
+    }
+    function setColor(){}
+    function setPenSize(){}
 }
 
 class Point: Drawable{
-    int x = 0, y = 0;
+    float x = 0, y = 0;
+
 }
 
-Point p;
-p.x = 0.5;
-p.y = 0.5;
+class Square: Drawable{
+    float x = 0.5, y = 0.5;
+    float length = 0.05;
+}
 
-p.draw();
+class Circle: Drawable{
+    float x = 0.5, y = 0.5;
+    float radius = 0.05;
+}
+
+
+Square sq;
+sq.draw();
+Circle c;
+c.radius = 0.22;
+c.draw();
+
+for(int i = 0; i < 40; i = i + 1){
+    sq.length = sq.length + 0.04;
+    sq.draw();
+    c.radius = c.radius + 0.04;
+    c.draw();
+}

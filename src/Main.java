@@ -28,7 +28,7 @@ public class Main {
 
 
         Lexer lexer = new Lexer(stringBuilder.toString());
-        Parser parser = new Parser(lexer, 3);
+        Parser parser = new Parser(lexer, 4);
         LayanAST ast = parser.parse();
         ASTVisitorDefine visitor = new ASTVisitorDefine(ast);
         ASTVisitorResolve visitorResolve = new ASTVisitorResolve(ast);

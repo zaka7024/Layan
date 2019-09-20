@@ -174,7 +174,13 @@ public class Parser {
                 programStatements.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 programStatements.add(functionCallStatement());
-            }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
+            }else if(getLookaheadType(1) == Tokens.ID &&
+                    getLookaheadType(2) == Tokens.DOT &&
+                    getLookaheadType(3) == Tokens.ID &&
+                    getLookaheadType(4) == Tokens.EQUAL){
+                programStatements.add(assignmentStatements());
+            }else if(getLookaheadType(1) == Tokens.ID &&
+                    getLookaheadType(2) == Tokens.DOT){
                 programStatements.add(resolutionStatement());
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 programStatements.add(declarationStatements());
@@ -241,13 +247,21 @@ public class Parser {
     }
 
     private LayanAST assignmentStatements(){
-        // Assignment Statements Rule: assignment_stat: ID '=' expr
+        // Assignment Statements Rule: assignment_stat: (ID | ID '.' ID) '=' expression
 
         ID name = new ID(match(Tokens.ID));
+        ID member = null;
+        if(getLookaheadToken(1).type == Tokens.DOT &&
+        getLookaheadToken(2).type == Tokens.ID){
+            match(getLookaheadType(1));
+            member = new ID(match(getLookaheadType(1)));
+        }
         Token equalToken = match(Tokens.EQUAL);
         ExprNode exprNode = expr();
         match(Tokens.SEMICOLON);
-        return new EqualNode(name, equalToken, exprNode);
+        EqualNode equalNode = new EqualNode(name, equalToken, exprNode);
+        equalNode.member = new ResolutionObject(name, member);
+        return equalNode;
     }
 
     private ResolutionObject resolutionStatement(){
@@ -291,8 +305,13 @@ public class Parser {
                 layanASTList.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 layanASTList.add(functionCallStatement());
+            }else if(getLookaheadType(1) == Tokens.ID &&
+                    getLookaheadType(2) == Tokens.DOT &&
+                    getLookaheadType(3) == Tokens.ID &&
+                    getLookaheadType(4) == Tokens.EQUAL){
+                layanASTList.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
-                resolutionStatement();
+                layanASTList.add(resolutionStatement());
             }else if(declarationTokens.contains(getLookaheadType(1))){
                 layanASTList.add(declarationStatements());
             }else if(getLookaheadType(1) == Tokens.IF || getLookaheadType(1) == Tokens.WHILE){

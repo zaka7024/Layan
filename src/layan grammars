@@ -8,7 +8,7 @@ NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
 BOOLEAN: 'true' | 'false'
 
-assignment_stat: ID '=' expression
+assignment_stat: (ID | ID '.' ID) '=' expression
 
 expression:
 expr: and (('||') and)*
