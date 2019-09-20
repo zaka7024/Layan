@@ -1,18 +1,15 @@
 class Drawable{
-    function draw(){
-        print("i am a draw function");
-    }
+    function draw(){}
     function setColor(){}
     function setPenSize(){}
 }
 
 class Point: Drawable{
     float x = 0, y = 0;
-
 }
 
 class Square: Drawable{
-    float x = 0.5, y = 0.5;
+    float x = 0.0, y = 0.0;
     float length = 0.05;
 }
 
@@ -21,16 +18,33 @@ class Circle: Drawable{
     float radius = 0.05;
 }
 
-
-Square sq;
-sq.draw();
-Circle c;
-c.radius = 0.22;
-c.draw();
-
-for(int i = 0; i < 40; i = i + 1){
-    sq.length = sq.length + 0.04;
-    sq.draw();
-    c.radius = c.radius + 0.04;
-    c.draw();
+class Text: Drawable{
+    float x = 0.0, y = 0.0;
+    int value = "Layan";
 }
+
+class ArrayVisualizer{
+    int size = 1;
+
+    function init(int s){
+        size = s;
+        drawArray();
+    }
+
+    function drawArray(){
+            Square sq;
+            sq.y = 0.5;
+            Text tex;
+            tex.y = sq.y;
+        for(int i = 0; i < size; i = i + 1){
+            sq.x = sq.x + 0.1;
+            sq.draw();
+            tex.value = i;
+            tex.x = sq.x;
+            tex.draw();
+        }
+    }
+}
+
+ArrayVisualizer av;
+av.init(8);

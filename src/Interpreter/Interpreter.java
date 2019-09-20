@@ -427,12 +427,13 @@ public class Interpreter {
     //
 
     private void Draw(){
-        StdDraw.setPenRadius(0.01);
+        StdDraw.setPenRadius(0.005);
         ClassSpace space = (ClassSpace) getSpaceWithSymbol("draw");
         switch (space.classSymbol.name){
             case "Point": drawPoint(space); break;
             case "Square": drawSquare(space); break;
             case "Circle": drawCircle(space); break;
+            case "Text": drawText(space); break;
         }
     }
 
@@ -454,5 +455,12 @@ public class Interpreter {
         float y = Float.parseFloat(space.get("y").toString());
         float radius = Float.parseFloat(space.get("radius").toString());
         StdDraw.circle(x, y, radius);
+    }
+
+    private void drawText(ClassSpace space){
+        float x = Float.parseFloat(space.get("x").toString());
+        float y = Float.parseFloat(space.get("y").toString());
+        String text = space.get("value").toString();
+        StdDraw.text(x, y, text);
     }
 }
