@@ -64,3 +64,9 @@ print_statement:
 'print' '(' expression ')' ';'
 
 // TODO:: Assign object to object in class
+// TODO:: Unary operators
+// TODO:: Expressions
+// TODO:: Random number
+// TODO:: Read from file
+// TODO:: Array
+// TODO:: List

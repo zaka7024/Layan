@@ -27,9 +27,6 @@ public class Main {
         while ((temp = bufferedReader.readLine()) != null)
             stringBuilder.append(temp);
 
-        // StdDraw init
-        //StdDraw.setCanvasSize(1800,800);
-
         Lexer lexer = new Lexer(stringBuilder.toString());
         Parser parser = new Parser(lexer, 4);
         LayanAST ast = parser.parse();

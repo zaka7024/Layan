@@ -6,6 +6,10 @@ class Drawable{
 
 function setColor(){}
 function setPenSize(float size){}
+function setCanvasSize(int width, int height){}
+function setScale(float min, float max){}
+function wait(int ms){}
+function clear(){}
 
 class Point: Drawable{
     float x = 0, y = 0;
@@ -36,30 +40,31 @@ class Text: Drawable{
     int value = "Layan";
 }
 
-class ArrayVisualizer{
-    int size = 1;
+/*YOUR CODE HERE*/
+setCanvasSize(400, 400);
+setPenSize(0.01);
+setScale(0, 100);
 
-    function init(int s){
-        size = s;
-        drawArray();
-    }
-
-    function drawArray(){
-            Square sq;
-            sq.y = 0.5;
-            Text tex;
-            tex.y = sq.y;
-        for(int i = 0; i < size; i = i + 1){
-            sq.x = sq.x + 0.1;
-            sq.draw();
-            tex.value = i;
-            tex.x = sq.x;
-            tex.draw();
+function doIt(){
+    wait(1000);
+    clear();
+    Point dot;
+    Point a;
+    for(int i = 0; i <= 50; i = i + 1){
+        for(int j = 0; j <= 100; j = j + 1){
+            dot.x = j;
+            dot.y = i;
+            a.x = 100 - j;
+            a.y = 100 - i;
+            dot.draw();
+            a.draw();
         }
     }
 }
 
-setPenSize(0.005);
+while(true){
+    doIt();
+}
 
-ArrayVisualizer av;
-av.init(8);
+
+

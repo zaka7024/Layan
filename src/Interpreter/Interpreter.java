@@ -137,6 +137,14 @@ public class Interpreter {
             Draw();
         }else if(symbol.name.compareTo("setPenSize") == 0){
             setPenSize(functionSpace);
+        }else if(symbol.name.compareTo("setScale") == 0){
+            setScale(functionSpace);
+        }else if(symbol.name.compareTo("setCanvasSize") == 0){
+            setCanvasSize(functionSpace);
+        }else if(symbol.name.compareTo("wait") == 0){
+            wait(functionSpace);
+        }else if(symbol.name.compareTo("clear") == 0){
+            clear(functionSpace);
         }
 
         try{
@@ -429,10 +437,29 @@ public class Interpreter {
     //
 
     private void setPenSize(FunctionSpace space){
-        System.out.println("setPenSize");
         float size = Float.parseFloat(space.get("size").toString());
-        System.out.println(size);
         StdDraw.setPenRadius(size);
+    }
+
+    private void setScale(FunctionSpace space){
+        float min = Float.parseFloat(space.get("min").toString());
+        float max = Float.parseFloat(space.get("max").toString());
+        StdDraw.setScale(min, max);
+    }
+
+    private void setCanvasSize(FunctionSpace space){
+        int width = Integer.parseInt(space.get("width").toString());
+        int height = Integer.parseInt(space.get("height").toString());
+        StdDraw.setCanvasSize(width, height);
+    }
+
+    private void wait(FunctionSpace space){
+        int ms = Integer.parseInt(space.get("ms").toString());
+        StdDraw.pause(ms);
+    }
+
+    private void clear(FunctionSpace space){
+        StdDraw.clear();
     }
 
     private void Draw(){
