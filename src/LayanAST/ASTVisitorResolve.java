@@ -18,7 +18,7 @@ public class ASTVisitorResolve {
     private void walk(LayanAST root){
         switch (root.token.type){
             case Tokens.PROGRAM: walkProgram((Program) root); break;
-            case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
+            case Tokens.TYPE: walkDeclarations(root); break;
             case Tokens.ID: walkID(root); break;
             case Tokens.PRINT: walkPrint((Print) root); break;
             case Tokens.IF:
@@ -110,15 +110,17 @@ public class ASTVisitorResolve {
 
     private void walkResolutionObject(ResolutionObject node){
 
+        // TODO:: Remove this bad code
+
         ObjectSymbol objectSymbol = (ObjectSymbol) node.type.scope.resolve(node.type.name.text);
         if(objectSymbol == null){
             throw new Error("undefined symbol: " + node.type.name.text);
         }
         node.type.type = node.type.scope.resolve(node.type.name.text).type;
-        node.type.evalType = node.type.scope.resolveMember(node.type.name.text).evalType;
         Symbol member = ((ClassSymbol)objectSymbol.type).scope.resolveMember(node.member.name.text);
         if(member == null) throw new Error(node.member.name.text + " must be predefined");
         symbolTable.memberAccess(node);
+
         node.member.symbol = member;
         node.member.type = member.type;
         node.member.evalType = member.evalType;
@@ -149,6 +151,12 @@ public class ASTVisitorResolve {
         }
     }
 
+    private void walkDeclarations(LayanAST node){
+        if(node instanceof ObjectDeclaration) walkObjectDeclaration((ObjectDeclaration) node);
+        else if(node instanceof VariableDeclarationList) walkVariableDeclarationList((VariableDeclarationList) node);
+        else walkVariableDeclaration((VariableDeclaration) node);
+    }
+
     private void walkVariableDeclarationList(VariableDeclarationList node){
         for(VariableDeclaration item: node.variableDeclarations)
             walkVariableDeclaration(item);
@@ -156,8 +164,9 @@ public class ASTVisitorResolve {
 
     private void walkMethodDeclaration(MethodDeclaration node){
         // walk the function params
-        for(VariableDeclaration var: node.parameters)
-            walkVariableDeclaration(var);
+        // var maybe a variable or object declaration
+        for(LayanAST var: node.parameters)
+            walk(var);
         walk(node.block);
     }
 

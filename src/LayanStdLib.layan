@@ -1,3 +1,5 @@
+function test(int x){}
+
 class Drawable{
     function draw(){}
 }
@@ -42,6 +44,4 @@ class Text: Drawable{
     string value = "Layan";
 }
 
-setCanvasSize(400, 400);
-setPenSize(0.01);
-setScale(0, 100);
+initLayan();

@@ -37,8 +37,6 @@ parameters: declaration_stat (',' declaration_stat)*
 
 resolution_object: ID ('.' (ID | function_call)) ';'
 
-//TODO:: Compute evalType member access
-
 if_statement: 'if' '(' expression ')' block
 ('else' block')?
 block: '{' function_statements '}'
@@ -62,7 +60,7 @@ function_call: ID '(' ((expression) ',')'* ')'
 
 print_statement:
 'print' '(' expression ')' ';'
-// TODO:: Window class
+// TODO:: Pass object as arg
 // TODO:: Expressions
 // TODO:: Assign object to object
 // TODO:: Random number

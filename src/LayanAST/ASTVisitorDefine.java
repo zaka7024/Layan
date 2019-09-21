@@ -6,6 +6,11 @@ import LayanAST.Expressions.*;
 import Symbols.*;
 import Tokens.Tokens;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class ASTVisitorDefine {
 
     private Scope currentScope; // represent the current scope in the scope tree
@@ -18,7 +23,7 @@ public class ASTVisitorDefine {
     private void walk(LayanAST root){
         switch (root.token.type){
             case Tokens.PROGRAM: walkProgram((Program) root); break;
-            case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
+            case Tokens.TYPE: walkDeclarations(root); break;
             case Tokens.ID: walkID(root); break;
             case Tokens.PRINT: walkPrint((Print) root); break;
             case Tokens.IF:
@@ -71,6 +76,12 @@ public class ASTVisitorDefine {
         }
     }
 
+    private List<Symbol> walkDeclarations(LayanAST node){
+        if(node instanceof ObjectDeclaration) return Collections.singletonList(walkObjectDeclaration((ObjectDeclaration) node));
+        else if(node instanceof VariableDeclarationList) return walkVariableDeclarationList((VariableDeclarationList) node);
+        return Collections.singletonList(walkVariableDeclaration((VariableDeclaration) node));
+    }
+
     private Symbol walkVariableDeclaration(VariableDeclaration node){
         System.out.println(node.toStringNode());
         VariableSymbol variableSymbol = new VariableSymbol(node.id.token.text, null,
@@ -106,9 +117,11 @@ public class ASTVisitorDefine {
         walk(node.expression);
     }
 
-    private void walkVariableDeclarationList(VariableDeclarationList node){
+    private List<Symbol> walkVariableDeclarationList(VariableDeclarationList node){
+        List<Symbol> symbols = new ArrayList<>();
         for(VariableDeclaration item: node.variableDeclarations)
-            walkVariableDeclaration(item);
+            symbols.add(walkVariableDeclaration(item));
+        return symbols;
     }
 
     private void walkResolutionObject(ResolutionObject node){
@@ -116,7 +129,7 @@ public class ASTVisitorDefine {
         node.member.scope = currentScope;
     }
 
-    private void walkObjectDeclaration(ObjectDeclaration node){
+    private Symbol walkObjectDeclaration(ObjectDeclaration node){
         System.out.println(node.toStringNode());
         ObjectSymbol objectSymbol = new ObjectSymbol(node.id.name.text,null,
                 node, currentScope);
@@ -125,11 +138,15 @@ public class ASTVisitorDefine {
         node.id.symbol = objectSymbol;
         // set the scope for id the current scope
         node.id.scope = currentScope;
+        // set object type to a user define type
+        objectSymbol.evalType = new BuiltInTypeSymbol("void");
+        return objectSymbol;
     }
 
     private void walkMethodDeclaration(MethodDeclaration node){
         System.out.println(node.toStringNode());
-        MethodSymbol methodSymbol = new MethodSymbol(node.id.name.text, new BuiltInTypeSymbol("void"), currentScope, node);
+        MethodSymbol methodSymbol = new MethodSymbol(node.id.name.text,
+                new BuiltInTypeSymbol("void"), currentScope, node);
         currentScope.define(methodSymbol);
         // push scope(parameters scope) in the tree scope
         currentScope = methodSymbol;
@@ -137,8 +154,11 @@ public class ASTVisitorDefine {
         node.id.symbol = methodSymbol;
         node.id.scope = currentScope;
         // define all parameters in the parameters scope
-        for (LayanAST arg: node.parameters)
-            currentScope.define(walkVariableDeclaration((VariableDeclaration) arg));
+        for (LayanAST arg: node.parameters){
+            List<Symbol> symbols = walkDeclarations(arg);
+            for(Symbol item: symbols)
+                currentScope.define(item);
+        }
         // push local scope
         currentScope = new LocalScope(currentScope);
 

@@ -339,7 +339,7 @@ public class Parser {
         ID name = new ID(match(Tokens.ID));
         match(Tokens.OPENPARENTHESIS);
 
-        List<VariableDeclaration> para = new ArrayList<>();
+        List<LayanAST> para = new ArrayList<>();
         parameters(para); // get all parameters
 
         match(Tokens.CLOSEPARENTHESIS);
@@ -353,34 +353,25 @@ public class Parser {
         return methodDeclaration;
     }
 
-    private ExprNode methodCallParameters(){ // Work for class and method parameters
-        return expr();
-    }
-
-    private void methodCall(){//TODO:: Delete this code.txt
-        //ID '(' (expr ',')'* ')' ';'
-        match(Tokens.ID);
-        match(Tokens.OPENPARENTHESIS);
-        methodCallParameters();
-        while (getLookaheadType(1) == Tokens.COMMA){
-            match(getLookaheadType(1));
-            methodCallParameters();
-        }
-        match(Tokens.CLOSEPARENTHESIS);
-        match(Tokens.SEMICOLON);
-    }
-
-    private void parameters(List<VariableDeclaration> para){
+    private void parameters(List<LayanAST> para){
         // parameters: Type ID (',' parameters)*
-        if(getLookaheadType(1) == Tokens.TYPE || getLookaheadType(1) == Tokens.ID){
-            VariableDeclaration variableDeclaration =
+        if(getLookaheadType(1) == Tokens.TYPE){
+            VariableDeclaration declaration =
                     new VariableDeclaration(new ID(match(getLookaheadType(1))), new ID(match(getLookaheadType(1))));
             //TODO::Init value for the args
-            para.add(variableDeclaration);
-            while (getLookaheadType(1) == Tokens.COMMA){
-                match(getLookaheadType(1));
-                parameters(para);
-            }
+            para.add(declaration);
+
+        }else if(getLookaheadType(1) == Tokens.ID){
+            ID type = new ID(match(getLookaheadType(1)));
+            ID name = new ID(match(getLookaheadType(1)));
+            name.evalType = new BuiltInTypeSymbol("void");
+            ObjectDeclaration declaration = new ObjectDeclaration(type, name);
+            para.add(declaration);
+        }
+
+        while (getLookaheadType(1) == Tokens.COMMA){
+            match(getLookaheadType(1));
+            parameters(para);
         }
     }
 
@@ -433,6 +424,12 @@ public class Parser {
         }
         match(Tokens.SEMICOLON);
         return new ObjectDeclaration(type, name);
+    }
+
+    private ObjectDeclaration objectDeclarationStatement(){
+        ObjectDeclaration declaration = objectDeclaration();
+        match(Tokens.SEMICOLON);
+        return declaration;
     }
 
     private ConditionNode conditionStatements(){

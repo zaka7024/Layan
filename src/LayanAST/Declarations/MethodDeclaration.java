@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MethodDeclaration extends LayanAST {
     public ID id;
-    public List<VariableDeclaration> parameters = new ArrayList<>();
+    public List<LayanAST> parameters = new ArrayList<>();
     public BlockNode block;
 
     public MethodDeclaration( Token id,ID name, BlockNode blockNode) {

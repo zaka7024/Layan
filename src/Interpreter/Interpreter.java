@@ -13,8 +13,10 @@ import Symbols.BuiltInTypeSymbol;
 import Symbols.ClassSymbol;
 import Symbols.MethodSymbol;
 import Tokens.Tokens;
+import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.Date;
 import java.util.Stack;
 
 public class Interpreter {
@@ -464,8 +466,8 @@ public class Interpreter {
 
     private void initLayan(){
         MemorySpace space = getSpaceWithSymbol("WIDTH");
-        System.out.println("init");
         space.put("WIDTH", windowWidth);
+        space.put("HEIGHT", windowHeight);
     }
 
     private void setPenSize(FunctionSpace space){
@@ -500,17 +502,27 @@ public class Interpreter {
         ClassSpace space = (ClassSpace) getSpaceWithSymbol("draw");
         switch (space.classSymbol.name){
             case "Point": drawPoint(space); break;
+            case "Line": drawLine(space); break;
             case "Square": drawSquare(space); break;
             case "Rectangle": drawRectangle(space); break;
             case "Circle": drawCircle(space); break;
             case "Text": drawText(space); break;
         }
+        //StdDraw.save("src/Frames/" + new Date().getTime() + ".png");
     }
 
     private void drawPoint(ClassSpace space){
         float x = Float.parseFloat(space.get("x").toString());
         float y = Float.parseFloat(space.get("y").toString());
         StdDraw.point(x, y);
+    }
+
+    private void drawLine(ClassSpace space){
+        Point2D a = new Point2D(Float.parseFloat(((ClassSpace)space.get("a")).get("x").toString()),
+                Float.parseFloat(((ClassSpace)space.get("a")).get("y").toString()));
+        Point2D b = new Point2D(Float.parseFloat(((ClassSpace)space.get("b")).get("x").toString()),
+                Float.parseFloat(((ClassSpace)space.get("b")).get("y").toString()));
+        StdDraw.line(a.x(), a.y(), b.x(), b.y());
     }
 
     private void drawSquare(ClassSpace space){
