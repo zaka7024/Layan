@@ -1,55 +1,16 @@
 
-class Drawable{
-    function draw(){}
-
-}
-
-function setColor(){}
-function setPenSize(float size){}
-function setCanvasSize(int width, int height){}
-function setScale(float min, float max){}
-function wait(int ms){}
-function clear(){}
-
-class Point: Drawable{
-    float x = 0, y = 0;
-}
-
-class Square: Drawable{
-    float x = 0.0, y = 0.0;
-    float length = 0.05;
-}
-
-class Rectangle: Drawable{
-    float x = 0.0, y = 0.0;
-    float width= 0.05, height = 0.05;
-}
-
-class Circle: Drawable{
-    float x = 0.5, y = 0.5;
-    float radius = 0.05;
-}
-
-class Line: Drawable{
-    Point a;
-    Point b;
-}
-
-class Text: Drawable{
-    float x = 0.0, y = 0.0;
-    int value = "Layan";
-}
-
-/*YOUR CODE HERE*/
-setCanvasSize(400, 400);
-setPenSize(0.01);
-setScale(0, 100);
-
 function doIt(){
+    Text tex;
+    tex.x = 50;
+    tex.y = 50;
+    tex.value = "i will be in the past";
+
     wait(1000);
     clear();
+
     Point dot;
     Point a;
+
     for(int i = 0; i <= 50; i = i + 1){
         for(int j = 0; j <= 100; j = j + 1){
             dot.x = j;
@@ -58,10 +19,10 @@ function doIt(){
             a.y = 100 - i;
             dot.draw();
             a.draw();
+            tex.draw();
         }
     }
 }
 
-print(+2 -- 2);
-
-
+initLayan();
+print(WIDTH);

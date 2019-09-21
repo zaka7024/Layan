@@ -7,6 +7,7 @@ import Lexer.Lexer;
 import Parser.Parser;
 import Tokens.Token;
 import Tokens.Tokens;
+import com.sun.org.apache.bcel.internal.generic.Visitor;
 import edu.princeton.cs.algs4.StdDraw;
 
 import java.io.*;
@@ -15,18 +16,27 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         FileReader fileReader = null;
+        BufferedReader bufferedReader;
+        StringBuilder stringBuilder = new StringBuilder();
+        String temp = "";
         try {
-            fileReader = new FileReader("C:\\Users\\HP\\IdeaProjects\\Layan\\src\\code.txt");
+            fileReader = new FileReader
+                    ("C:\\Users\\HP\\IdeaProjects\\Layan\\src\\LayanStdLib.layan");
+            bufferedReader = new BufferedReader(fileReader);
+            while ((temp = bufferedReader.readLine()) != null)
+                stringBuilder.append(temp);
+
+            fileReader = new FileReader
+                    ("C:\\Users\\HP\\IdeaProjects\\Layan\\src\\code.txt");
+            bufferedReader = new BufferedReader(fileReader);
+            while ((temp = bufferedReader.readLine()) != null)
+                stringBuilder.append(temp);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        StringBuilder stringBuilder = new StringBuilder();
-        String temp = "";
-        while ((temp = bufferedReader.readLine()) != null)
-            stringBuilder.append(temp);
-
+        System.out.println(stringBuilder.toString());
         Lexer lexer = new Lexer(stringBuilder.toString());
         Parser parser = new Parser(lexer, 4);
         LayanAST ast = parser.parse();

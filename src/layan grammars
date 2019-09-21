@@ -62,10 +62,9 @@ function_call: ID '(' ((expression) ',')'* ')'
 
 print_statement:
 'print' '(' expression ')' ';'
-
-// TODO:: Assign object to object
-// TODO:: Unary operators
+// TODO:: Window class
 // TODO:: Expressions
+// TODO:: Assign object to object
 // TODO:: Random number
 // TODO:: Read from file
 // TODO:: Array

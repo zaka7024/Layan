@@ -23,6 +23,9 @@ public class Interpreter {
     private MemorySpace currentSpace;
     private Stack<FunctionSpace> callStack; // function call stack
 
+    // StdDraw
+    int windowWidth = 512, windowHeight = 512;
+
     public Interpreter(LayanAST root){
         System.out.println("\nInterpreter start");
         globalSpace = new MemorySpace("globals"); // define global space for global vars, classes,
@@ -34,7 +37,7 @@ public class Interpreter {
         // StdDraw init
     }
 
-    private Object execute(LayanAST root){
+    public Object execute(LayanAST root){
         switch (root.token.type){
             case Tokens.PROGRAM: walkProgram((Program) root); break;
             case Tokens.ID: return walkID(root);
@@ -144,7 +147,9 @@ public class Interpreter {
         }else if(symbol.name.compareTo("wait") == 0){
             wait(functionSpace);
         }else if(symbol.name.compareTo("clear") == 0){
-            clear(functionSpace);
+            clear();
+        }else if(symbol.name.compareTo("initLayan") == 0){
+            initLayan();
         }
 
         try{
@@ -457,6 +462,12 @@ public class Interpreter {
 
     //
 
+    private void initLayan(){
+        MemorySpace space = getSpaceWithSymbol("WIDTH");
+        System.out.println("init");
+        space.put("WIDTH", windowWidth);
+    }
+
     private void setPenSize(FunctionSpace space){
         float size = Float.parseFloat(space.get("size").toString());
         StdDraw.setPenRadius(size);
@@ -472,6 +483,8 @@ public class Interpreter {
         int width = Integer.parseInt(space.get("width").toString());
         int height = Integer.parseInt(space.get("height").toString());
         StdDraw.setCanvasSize(width, height);
+        windowWidth = width;
+        windowHeight = height;
     }
 
     private void wait(FunctionSpace space){
@@ -479,7 +492,7 @@ public class Interpreter {
         StdDraw.pause(ms);
     }
 
-    private void clear(FunctionSpace space){
+    private void clear(){
         StdDraw.clear();
     }
 
