@@ -172,8 +172,7 @@ public class ASTVisitorDefine {
     }
 
     private void walkPlus(LayanAST node){
-        String name = node.getClass().getTypeName();
-        if(name.compareTo(AddNode.class.getTypeName()) == 0){
+        if(node instanceof AddNode){
             walkAddNode((AddNode) node);
         }else{
             walkUnaryPositive((UnaryPositive) node);
@@ -198,8 +197,7 @@ public class ASTVisitorDefine {
     }
 
     private void walkMinus(LayanAST node){
-        String name = node.getClass().getTypeName();
-        if(name.compareTo(SubtractionNode.class.getTypeName()) == 0){
+        if(node instanceof SubtractionNode){
             walkSubtractionNode((SubtractionNode) node);
         }else{
             walkUnaryNegative((UnaryNegative) node);

@@ -155,7 +155,8 @@ public class SymbolTable {
     }
 
     public Type unaryMinus(ExprNode a){
-        if(!(a.evalType == _int || a.evalType == _float)){
+        if(!(((BuiltInTypeSymbol) a.evalType).typeIndex == _int.typeIndex ||
+                (((BuiltInTypeSymbol) a.evalType).typeIndex == _float.typeIndex))){
             throw new Error(a.token.text + " must have int/float type");
         }
         return a.evalType;

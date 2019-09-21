@@ -62,9 +62,6 @@ function doIt(){
     }
 }
 
-while(true){
-    doIt();
-}
-
+print(+2 -- 2);
 
 

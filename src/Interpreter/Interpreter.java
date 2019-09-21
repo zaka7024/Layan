@@ -42,8 +42,8 @@ public class Interpreter {
             case Tokens.RETURN: _return((ReturnNode) root); break;
             case Tokens.TYPE: walkVariableDeclarationList((VariableDeclarationList) root); break;
             case Tokens.EQUAL: walkAssignment((EqualNode) root); break;
-            case Tokens.PLUS: return walkAddNode((AddNode) root);
-            case Tokens.MINUS: return walkMinusNode((SubtractionNode) root);
+            case Tokens.PLUS: return walkPlus(root);
+            case Tokens.MINUS: return walkMinus(root);
             case Tokens.MULTIPLICATION: return walkMultiplicationNode((MultiplicationNode) root);
             case Tokens.DIVISION: return walkDivisionNode((DivisionNode) root);
             case Tokens.INT: return Integer.parseInt(root.token.text);
@@ -264,6 +264,17 @@ public class Interpreter {
         return value;
     }
 
+    private Object walkPlus(LayanAST node){
+        if(node instanceof AddNode){
+            return walkAddNode((AddNode) node);
+        }
+        return walkUnaryPositive((UnaryPositive) node);
+    }
+
+    private Object walkUnaryPositive(UnaryPositive node){
+        return execute(node.expression);
+    }
+
     private Object walkAddNode(AddNode node){
         if(((BuiltInTypeSymbol)node.evalType).typeIndex == 4){ // float
             return cast(node, (Float.parseFloat(execute(node.left).toString()) +
@@ -276,7 +287,17 @@ public class Interpreter {
         }
     }
 
-    private Object walkMinusNode(SubtractionNode node){
+    private Object walkMinus(LayanAST node){
+        if(node instanceof SubtractionNode) return walkSubtractionNode((SubtractionNode)node);
+        return walkUnaryNegative((UnaryNegative)node);
+    }
+
+    private Object walkUnaryNegative(UnaryNegative node){
+        if(execute(node.expression) instanceof Float) return -Float.parseFloat(execute(node.expression).toString());
+        return -Integer.parseInt(execute(node.expression).toString());
+    }
+
+    private Object walkSubtractionNode(SubtractionNode node){
         if(((BuiltInTypeSymbol)node.evalType).typeIndex == 4){ // float
             return cast(node, (Float.parseFloat(execute(node.left).toString()) -
                     Float.parseFloat(execute(node.right).toString())) + "");
