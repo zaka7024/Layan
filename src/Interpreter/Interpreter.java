@@ -12,9 +12,11 @@ import LayanAST.Print;
 import Symbols.BuiltInTypeSymbol;
 import Symbols.ClassSymbol;
 import Symbols.MethodSymbol;
+import Symbols.Symbol;
 import Tokens.Tokens;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Date;
 import java.util.Stack;
@@ -77,6 +79,7 @@ public class Interpreter {
     }
 
     private MemorySpace getSpaceWithSymbol(String id){
+
         if(!callStack.empty() && callStack.peek().get(id) != null) return callStack.peek();
         else{
             MemorySpace space = globalSpace;
@@ -105,6 +108,9 @@ public class Interpreter {
 
     private Object walkID(LayanAST node){
         if(node instanceof ID){
+            //StdRandom init
+            setRand();
+
             return getSpaceWithSymbol(((ID) node).name.text).get(((ID) node).name.text);
         }else if(node instanceof FunctionCall){
             call((FunctionCall) node);
@@ -186,8 +192,7 @@ public class Interpreter {
     }
 
     private void walkClassDeclaration(ClassDeclaration node){
-        ClassSymbol classSymbol = (ClassSymbol) node.id.symbol;
-        //execute(((ClassDeclaration)classSymbol.def).block);
+        //
     }
 
     private void walkObjectDeclaration(ObjectDeclaration node){
@@ -201,6 +206,12 @@ public class Interpreter {
         currentSpace = globalSpace;
 
         execute(((ClassDeclaration)classSymbol.def).block);
+
+        // call init method if it is there
+        Symbol symbol = (Symbol) classSpace.get("init");
+        if(symbol instanceof MethodSymbol){
+            walkBlock(((MethodSymbol) symbol).functionBlock);
+        }
 
         currentSpace = previousSpace;
         globalSpace = classSpace.previousSpace;
@@ -468,6 +479,12 @@ public class Interpreter {
         MemorySpace space = getSpaceWithSymbol("WIDTH");
         space.put("WIDTH", windowWidth);
         space.put("HEIGHT", windowHeight);
+        setRand();
+    }
+
+    private void setRand(){
+        MemorySpace space = getSpaceWithSymbol("RAND");
+        space.put("RAND", StdRandom.uniform());
     }
 
     private void setPenSize(FunctionSpace space){

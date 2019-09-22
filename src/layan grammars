@@ -60,10 +60,10 @@ function_call: ID '(' ((expression) ',')'* ')'
 
 print_statement:
 'print' '(' expression ')' ';'
-// TODO:: Pass object as arg
+
+
 // TODO:: Expressions
-// TODO:: Assign object to object
-// TODO:: Random number
 // TODO:: Read from file
+// TODO:: init method
 // TODO:: Array
 // TODO:: List

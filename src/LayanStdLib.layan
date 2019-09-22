@@ -14,6 +14,7 @@ function clear(){}
 
 int WIDTH;
 int HEIGHT;
+float RAND;
 
 class Point: Drawable{
     float x = 0, y = 0;
@@ -41,7 +42,8 @@ class Line: Drawable{
 
 class Text: Drawable{
     float x = 0.0, y = 0.0;
-    string value = "Layan";
+    int value = "Layan";
 }
+
 
 initLayan();
