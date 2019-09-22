@@ -134,6 +134,7 @@ public class Interpreter {
                 + " takes more or less args");
 
         int argsCount = call.args.size();
+
         if(argsCount != paramsCount) throw new Error("function " + call.id.name.text
         + " takes more or less args");
 

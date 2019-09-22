@@ -3,12 +3,10 @@ package Symbols;
 import LayanAST.Conditions.ConditionNode;
 import LayanAST.Declarations.FunctionCall;
 import LayanAST.Declarations.ID;
-import LayanAST.Declarations.VariableDeclaration;
 import LayanAST.Expressions.ExprNode;
 import LayanAST.Expressions.NotNode;
 import LayanAST.Expressions.ResolutionObject;
 import LayanAST.LayanAST;
-import com.sun.org.apache.regexp.internal.RE;
 
 public class SymbolTable {
 

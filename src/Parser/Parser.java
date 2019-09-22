@@ -411,7 +411,7 @@ public class Parser {
     }
 
     private ObjectDeclaration objectDeclaration(){
-        //object_declaration: Type(ID) ID '=' Type '('params')' ';'
+        //object_declaration:Type(ID) ID ( '(' args ')' )? ';'
         //parameters: declaration_stat (',' declaration_stat)*
         ID type = new ID(match(Tokens.ID));
         ID name = new ID(match(Tokens.ID));
@@ -419,13 +419,8 @@ public class Parser {
 
         ObjectDeclaration declaration = new ObjectDeclaration(type, name);
 
-        if(getLookaheadType(1) == Tokens.EQUAL){
+        if(getLookaheadType(1) == Tokens.OPENPARENTHESIS){
             match(getLookaheadType(1));
-            ID objectName = new ID(match(Tokens.ID));
-            if(name.name.text.compareTo(objectName.name.text) < 0)
-                throw new Error("Syntax Error: Expected " + name.name.text + " found "
-            + objectName.name.text);
-            match(Tokens.OPENPARENTHESIS);
 
             // get all args
             List<ExprNode> args = new ArrayList<>();

@@ -17,32 +17,64 @@ int HEIGHT;
 float RAND;
 
 class Point: Drawable{
-    float x = 0, y = 0;
+    float x = 0.0, y = 0.0;
+
+    function init(float a, float b){
+        x = a;
+        y = b;
+    }
 }
 
 class Square: Drawable{
-    float x = 0.0, y = 0.0;
-    float length = 0.05;
+    float x = 0.0, y = 0.0, length = 0.05;
+
+    function init(float a, float b, float len){
+        x = a;
+        y = b;
+        length = len;
+    }
 }
 
 class Rectangle: Drawable{
-    float x = 0.0, y = 0.0;
-    float width= 0.05, height = 0.05;
+    float x = 0.0, y = 0.0, width= 0.05, height = 0.05;
+
+    function init(float a, float b, float w, float h){
+        x = a;
+        y = b;
+        width = w;
+        height = h;
+    }
 }
 
 class Circle: Drawable{
-    float x = 0.5, y = 0.5;
-    float radius = 0.05;
+    float x = 0.5, y = 0.5, radius = 0.05;
+
+    function init(float a, float b, float rad){
+        x = a;
+        y = b;
+        radius = rad;
+    }
 }
 
 class Line: Drawable{
     Point a;
     Point b;
+
+    function init(Point first, Point second){
+        a = first;
+        b = second;
+    }
 }
 
 class Text: Drawable{
     float x = 0.0, y = 0.0;
-    int value = "Layan";
+    string value = "Layan";
+
+    function init(float a, float b, string text){
+        x = a;
+        y = b;
+        value = text;
+    }
 }
 
 initLayan();

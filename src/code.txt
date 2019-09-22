@@ -1,108 +1,18 @@
-setCanvasSize(800, 800);
-
-function doIt(){
-    Text tex;
-    tex.x = 50;
-    tex.y = 50;
-    tex.value = "i will be in the past";
-
-    wait(1000);
-    clear();
-
-    Point dot;
-    Point a;
-
-    for(int i = 0; i <= 50; i = i + 1){
-        for(int j = 0; j <= 100; j = j + 1){
-            dot.x = j;
-            dot.y = i;
-            a.x = 100 - j;
-            a.y = 100 - i;
-            dot.draw();
-            a.draw();
-            tex.draw();
-        }
-    }
-}
-
-
-
-function fillTheSquare(Square sq){
-    Point a;
-    a.x = sq.x - sq.length - 1;
-    a.y = sq.y - sq.length;
-
-    float steps = sq.length * 2;
-
-    for(int i = 0; i <= steps; i = i + 1){
-        for(int j = 0; j <= steps; j = j + 1){
-            a.x = a.x + 1;
-            a.draw();
-        }
-        a.x = sq.x - sq.length - 1;
-        a.y = a.y + 1;
-    }
-}
-
-function shapeIt(){
-    Square sq;
-    sq.length = 20;
-    sq.x = 50;
-    sq.y = 50;
-
-    Circle c;
-    c.radius = 30;
-    c.x = 50; c.y = 50; c.draw();
-
-    sq.draw();
-    wait(300);
-    fillTheSquare(sq);
-
-    c.radius = 15;
-    c.x = 15; c.y = 45+33.0; c.draw();
-    Square a;
-    sq.x = 15; sq.y = 45+33.0; sq.length = sq.length/2; sq.draw();
-    fillTheSquare(sq);
-
-    c.x = 15; c.y = 45-23.0; c.draw();
-    sq.x = 15; sq.y = 45-23.0; sq.draw();
-    fillTheSquare(sq);
-
-    c.x = 85; c.y = 45+33.0; c.draw();
-    sq.x = 85; sq.y = 45+33.0; sq.draw();
-    fillTheSquare(sq);
-
-    c.x = 85; c.y = 45-23.0; c.draw();
-    sq.x = 85; sq.y = 45-23.0; sq.draw();
-    fillTheSquare(sq);
-}
-
-class ArrayVisualizer{
-    int size;
-    function init(int s){
-        size = s;
-        show();
-    }
-
-    function show(){
-        Square sq;
-        sq.x = 10; sq.y = 50; sq.length = 5;
-        Text tex; tex.x = sq.x; tex.y = sq.y;
-        for(int i = 0; i < size; i = i + 1){
-            sq.draw();
-            wait(100);
-            tex.value = i;
-            tex.draw();
-            sq.x = sq.x + sq.length * 2;
-            tex.x = sq.x;
-        }
-    }
-}
-
-
-float size = 0.01;
+setCanvasSize(600, 600);
+float size = 0.001;
 setPenSize(size);
 setScale(0, 100);
 
 
-ArrayVisualizer av = ss(3);
+function magic(Circle c){
+    for(int i = 0 ; i < 80 ; i = i + 1){
+        c.radius = c.radius + 1;
+            c.draw();
+            wait(20);
+    }
+}
+
+setPenSize(0.1);
+
+Text tex(50, 50, "hello, world!");
+tex.draw();
