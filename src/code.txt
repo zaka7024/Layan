@@ -104,17 +104,5 @@ float size = 0.01;
 setPenSize(size);
 setScale(0, 100);
 
-class A{
-    function init(){
-        print("A.<int>");
-    }
-}
 
-class B: A{
-    function init(){
-            print("B.<int>");
-        }
-}
-
-A a;
-B b;
+ArrayVisualizer av = ss(3);

@@ -45,5 +45,4 @@ class Text: Drawable{
     int value = "Layan";
 }
 
-
 initLayan();

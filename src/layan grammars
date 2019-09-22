@@ -32,7 +32,7 @@ class_declaration: 'class' ID (':' TYPE) block
 block: '{'class_statements'}'
 class_statements: declaration_stat | method_declaration
 
-object_declaration:Type(ID) ID '=' Type '(' ')' ';'
+object_declaration:Type(ID) ID '=' Type '(' args ')' ';'
 parameters: declaration_stat (',' declaration_stat)*
 
 resolution_object: ID ('.' (ID | function_call)) ';'
@@ -64,6 +64,5 @@ print_statement:
 
 // TODO:: Expressions
 // TODO:: Read from file
-// TODO:: init method
 // TODO:: Array
 // TODO:: List

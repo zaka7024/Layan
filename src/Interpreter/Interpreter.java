@@ -17,8 +17,7 @@ import Tokens.Tokens;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdRandom;
-
-import java.util.Date;
+import Tokens.Token;
 import java.util.Stack;
 
 public class Interpreter {
@@ -131,6 +130,9 @@ public class Interpreter {
         // get params count
         int paramsCount = symbol.parameters.size();
         // get args count
+        if(call.args == null && paramsCount > 0) throw new Error("function " + call.id.name.text
+                + " takes more or less args");
+
         int argsCount = call.args.size();
         if(argsCount != paramsCount) throw new Error("function " + call.id.name.text
         + " takes more or less args");
@@ -208,9 +210,15 @@ public class Interpreter {
         execute(((ClassDeclaration)classSymbol.def).block);
 
         // call init method if it is there
+
+        FunctionCall functionCall =
+                new FunctionCall(new ID(new Token("init",Tokens.ID)), node.args);
+
         Symbol symbol = (Symbol) classSpace.get("init");
+        functionCall.id.symbol = symbol;
+
         if(symbol instanceof MethodSymbol){
-            walkBlock(((MethodSymbol) symbol).functionBlock);
+            call(functionCall);
         }
 
         currentSpace = previousSpace;

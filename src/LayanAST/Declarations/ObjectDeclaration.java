@@ -3,8 +3,11 @@ package LayanAST.Declarations;
 import LayanAST.Expressions.ExprNode;
 import LayanAST.LayanAST;
 
+import java.util.List;
+
 public class ObjectDeclaration extends LayanAST {
     public ID type, id;
+    public List<ExprNode> args;
 
     public ObjectDeclaration(ID t, ID id) {
         super(t.name);

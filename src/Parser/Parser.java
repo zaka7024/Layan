@@ -411,19 +411,35 @@ public class Parser {
     }
 
     private ObjectDeclaration objectDeclaration(){
-        //object_declaration: Type(ID) ID '=' Type '(' ')' ';'
+        //object_declaration: Type(ID) ID '=' Type '('params')' ';'
         //parameters: declaration_stat (',' declaration_stat)*
         ID type = new ID(match(Tokens.ID));
         ID name = new ID(match(Tokens.ID));
         name.evalType = new BuiltInTypeSymbol("void");
+
+        ObjectDeclaration declaration = new ObjectDeclaration(type, name);
+
         if(getLookaheadType(1) == Tokens.EQUAL){
             match(getLookaheadType(1));
-            match(Tokens.ID);
+            ID objectName = new ID(match(Tokens.ID));
+            if(name.name.text.compareTo(objectName.name.text) < 0)
+                throw new Error("Syntax Error: Expected " + name.name.text + " found "
+            + objectName.name.text);
             match(Tokens.OPENPARENTHESIS);
+
+            // get all args
+            List<ExprNode> args = new ArrayList<>();
+            args.add(expr());
+            while (getLookaheadType(1) == Tokens.COMMA){
+                match(getLookaheadType(1));
+                args.add(expr());
+            }
+            declaration.args = args;
+
             match(Tokens.CLOSEPARENTHESIS);
         }
         match(Tokens.SEMICOLON);
-        return new ObjectDeclaration(type, name);
+        return declaration;
     }
 
     private ObjectDeclaration objectDeclarationStatement(){
