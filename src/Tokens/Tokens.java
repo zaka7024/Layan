@@ -85,8 +85,8 @@ public static String getTokenName(int type){
         case INT:return "integer";
         case FLOAT:return "floating";
         case PRINT:return "print";
-        case OPENSQUAREBRACKET:return "OPENSQUAREBRACKET";
-        case CLOSESQUAREBRACKET:return "CLOSESQUAREBRACKET";
+        case OPENSQUAREBRACKET:return "[";
+        case CLOSESQUAREBRACKET:return "]";
         default: return "Unknown Token";
         }
     }

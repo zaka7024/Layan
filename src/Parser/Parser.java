@@ -142,8 +142,11 @@ public class Parser {
             return new UnaryNegative(match(getLookaheadType(1)), factor());
         }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.DOT){
             return resolutionObject();
+        }else if(getLookaheadType(1) == Tokens.ID
+                && getLookaheadType(2) == Tokens.OPENSQUAREBRACKET){ // array access
+            return arrayAccess();
         }
-        else if(getLookaheadType(1) == Tokens.ID){
+        else if(getLookaheadType(1) == Tokens.ID){ // variable
             return new ID(match(getLookaheadType(1)));
         }
         else if(getLookaheadType(1) == Tokens.NOT){
@@ -260,6 +263,23 @@ public class Parser {
         match(Tokens.SEMICOLON);
         declaration = new ArrayDeclaration(type, name, size);
         return declaration;
+    }
+
+    private ArrayAccess arrayAccess(){
+        // array_access: ID '[' expr ']'
+        ArrayAccess arrayAccess;
+        ID name = new ID(match(getLookaheadType(1)));
+        match(Tokens.OPENSQUAREBRACKET);
+        ExprNode index = expr();
+        match(Tokens.CLOSESQUAREBRACKET);
+        arrayAccess = new ArrayAccess(name, index);
+        return arrayAccess;
+    }
+
+    private ArrayAccess arrayAccessStatement(){
+        ArrayAccess arrayAccess = arrayAccess();
+        match(Tokens.SEMICOLON);
+        return arrayAccess;
     }
 
     private LayanAST assignmentStatements(){

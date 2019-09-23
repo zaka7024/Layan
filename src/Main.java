@@ -36,7 +36,6 @@ public class Main {
             e.printStackTrace();
         }
 
-        System.out.println(stringBuilder.toString());
         Lexer lexer = new Lexer(stringBuilder.toString());
         Parser parser = new Parser(lexer, 4);
         LayanAST ast = parser.parse();
