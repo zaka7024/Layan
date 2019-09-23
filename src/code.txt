@@ -12,7 +12,7 @@ function magic(Circle c){
     }
 }
 
-setPenSize(0.1);
+setPenSize(0.01);
 
-Text tex(50, 50, "hello, world!");
-tex.draw();
+Point a(50, 50);
+a.draw();

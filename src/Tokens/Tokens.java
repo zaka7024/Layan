@@ -41,6 +41,8 @@ public final class Tokens {
     public static final int FLOAT = 36;
     public static final int PRINT = 37;
     public static final int RETURN = 38;
+    public static final int OPENSQUAREBRACKET = 39;
+    public static final int CLOSESQUAREBRACKET = 40;
 
 public static String getTokenName(int type){
     switch (type){
@@ -83,6 +85,8 @@ public static String getTokenName(int type){
         case INT:return "integer";
         case FLOAT:return "floating";
         case PRINT:return "print";
+        case OPENSQUAREBRACKET:return "OPENSQUAREBRACKET";
+        case CLOSESQUAREBRACKET:return "CLOSESQUAREBRACKET";
         default: return "Unknown Token";
         }
     }

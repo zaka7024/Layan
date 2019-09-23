@@ -8,7 +8,9 @@ NUMBER: ('0'..'9')+('.' ('0'..'9')+)?
 STRING: ' " ' (NAME | NUMBER)* ' " '
 BOOLEAN: 'true' | 'false'
 
-assignment_stat: (ID | ID '.' ID) '=' expression
+assignment_stat: (ID | object_assignment | array_assignment) '=' expression
+object_assignment: ID '.' ID
+array_assignment: ID '[' expr ']'
 
 expression:
 expr: and (('||') and)*
@@ -17,7 +19,7 @@ comp: ar(('>' | '<' | '>=' | '<=' | '!=' | '==') or)
 ar: term (('+'|'-') term)*
 term: factor (('*', '/', '%') factor)*
 factor: + | - | '(' expr ')' |  ('!'boolean_expr) | FLOAT| INT | STRING | 'true' | 'false' | ID
- | resolution_object
+ | resolution_object | array_access
 
 method_declaration: 'function' ID '(' parameters? ')' block
 block: '{' function_statements '}'
@@ -57,12 +59,17 @@ operators:
 function_call_stat: function_call ';'
 function_call: ID '(' ((expression) ',')'* ')'
 
-
 print_statement:
 'print' '(' expression ')' ';'
+
+array_declaration:
+Type(ID) ID '[' expr ']' ';'
+
+array_access: ID '[' expr ']'
 
 
 // TODO:: Expressions
 // TODO:: Read from file
 // TODO:: Array
 // TODO:: List
+// TODO:: Foreach
