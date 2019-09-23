@@ -173,7 +173,8 @@ public class Parser {
         List<LayanAST> programStatements = new ArrayList<LayanAST>();
 
         while (tokens.contains(getLookaheadType(1))){
-            if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL){
+            if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.EQUAL ||
+                    getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENSQUAREBRACKET){
                 programStatements.add(assignmentStatements());
             }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENPARENTHESIS){
                 programStatements.add(functionCallStatement());
@@ -283,20 +284,34 @@ public class Parser {
     }
 
     private LayanAST assignmentStatements(){
-        // Assignment Statements Rule: assignment_stat: (ID | ID '.' ID) '=' expression
+        // assignment_stat: (ID | resolution_object | array_access) '=' expression
+        // resolution_object: ID '.' ID
+        // array_access: ID '[' expr ']'
 
-        ID name = new ID(match(Tokens.ID));
+        ID name = null;
         ID member = null;
-        if(getLookaheadToken(1).type == Tokens.DOT &&
-        getLookaheadToken(2).type == Tokens.ID){
+        ArrayAccess arrayAccess = null;
+
+        if(getLookaheadType(1) == Tokens.ID &&
+                getLookaheadType(2) == Tokens.DOT && // assign to object member
+        getLookaheadType(3) == Tokens.ID){
+            name = new ID(match(getLookaheadType(1)));
             match(getLookaheadType(1));
             member = new ID(match(getLookaheadType(1)));
+        }else if(getLookaheadType(1) == Tokens.ID && getLookaheadType(2) == Tokens.OPENSQUAREBRACKET){ // assign to array member
+            arrayAccess = arrayAccess();
+            name = arrayAccess.name;
+        }else{
+            name = new ID(match(getLookaheadType(1)));
         }
+
+
         Token equalToken = match(Tokens.EQUAL);
         ExprNode exprNode = expr();
         match(Tokens.SEMICOLON);
         EqualNode equalNode = new EqualNode(name, equalToken, exprNode);
         equalNode.member = new ResolutionObject(name, member);
+        equalNode.arrayAccess  = arrayAccess;
         return equalNode;
     }
 

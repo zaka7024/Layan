@@ -6,7 +6,8 @@ import Tokens.Token;
 public class EqualNode extends ExprNode {
     public ExprNode expression;
     public ID id;
-    public ResolutionObject member; // for resolution member rule
+    public ResolutionObject member; // assign to object member
+    public ArrayAccess arrayAccess; // assign to array member
     public EqualNode(ID id, Token t, ExprNode expr) {
         super(t);
         this.id = id;

@@ -14,5 +14,6 @@ function magic(Circle c){
 
 int x [10];
 int y = x[0];
+x[0] = 6;
 
 // TODO:: array member assignment
