@@ -68,8 +68,9 @@ Type(ID) ID '[' expr ']' ';'
 array_access: ID '[' expr ']'
 
 
+// TODO:: Array
+// TODO:: Null value
 // TODO:: Expressions
 // TODO:: Read from file
-// TODO:: Array
 // TODO:: List
 // TODO:: Foreach

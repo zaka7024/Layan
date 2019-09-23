@@ -207,9 +207,13 @@ public class Parser {
 
     private LayanAST declarationStatements(){ // rule represent the declaration statements include
         // variable declaration and class declaration
-        if(getLookaheadType(1) == Tokens.TYPE){
+        if(getLookaheadType(1) == Tokens.TYPE &&
+                getLookaheadType(3) == Tokens.OPENSQUAREBRACKET){
+            return arrayDeclaration();
+        }else if(getLookaheadType(1) == Tokens.TYPE){
             return variableDeclaration();
-        }else if(getLookaheadType(1) == Tokens.FUNCTION) {
+        }
+        else if(getLookaheadType(1) == Tokens.FUNCTION) {
             return methodDeclaration();
         }else if(getLookaheadType(1) == Tokens.ID){
             return objectDeclaration();
@@ -244,6 +248,18 @@ public class Parser {
         }
         match(Tokens.SEMICOLON);
         return new VariableDeclarationList(type, variableDeclarations);
+    }
+
+    private ArrayDeclaration arrayDeclaration(){
+        ArrayDeclaration declaration;
+        ID type = new ID(match(getLookaheadType(1)));
+        ID name = new ID(match(getLookaheadType(1)));
+        match(Tokens.OPENSQUAREBRACKET);
+        ExprNode size = expr();
+        match(Tokens.CLOSESQUAREBRACKET);
+        match(Tokens.SEMICOLON);
+        declaration = new ArrayDeclaration(type, name, size);
+        return declaration;
     }
 
     private LayanAST assignmentStatements(){

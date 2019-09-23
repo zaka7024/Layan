@@ -12,7 +12,4 @@ function magic(Circle c){
     }
 }
 
-setPenSize(0.01);
-
-Point a(50, 50);
-a.draw();
+int x [10];

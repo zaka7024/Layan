@@ -235,6 +235,12 @@ public class Lexer {
             }else if(currentChar == ':'){
                 match(':');
                 return generateToken(":", Tokens.COLON);
+            }else if(currentChar == '['){
+                match('[');
+                return generateToken("[", Tokens.OPENSQUAREBRACKET);
+            }else if(currentChar == ']'){
+                match(']');
+                return generateToken("]", Tokens.CLOSESQUAREBRACKET);
             }
             else throw new Error("Unexpected char: " + currentChar);
         }
