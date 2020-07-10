@@ -1,0 +1,14 @@
+
+
+setPenSize(0.05);
+setScale(0 , 100);
+setColor("blue");
+
+
+while(true){
+    FilledCircle google(RAND * 100, RAND * 100, RAND * 10);
+
+    google.draw();
+    setRandomColor();
+
+}
