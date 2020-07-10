@@ -40,22 +40,22 @@ for(int i = 0; i <= 10; i = i + 1){
 }
 ```
 
-### Built-in drawable classes:
-## Layan has a built-in drawable class to draw a primitive object such as circle and square.
+## Built-in drawable classes:
+### Layan has a built-in drawable class to draw a primitive object such as circle and square.
 
-⋅⋅* Circle(x, y, radius);
-⋅⋅* Square(x, y, halfWidth);
-⋅⋅* Rectangle(x, y, halfWidth, halfHeight);
-⋅⋅* Point(x, y);
-⋅⋅* FilledCircle(x, y, radius);
-⋅⋅* FilledSquare(x, y, halfWidth);
-⋅⋅* FilledRectangle(x, y, halfWidth, halfHeight);
-⋅⋅* Line(a, b, c, d);
-⋅⋅* Text(x, y, value);
+* Circle(x, y, radius);
+* Square(x, y, halfWidth);
+* Rectangle(x, y, halfWidth, halfHeight);
+* Point(x, y);
+* FilledCircle(x, y, radius);
+* FilledSquare(x, y, halfWidth);
+* FilledRectangle(x, y, halfWidth, halfHeight);
+* Line(a, b, c, d);
+* Text(x, y, value);
 
-## use the draw function to draw the object.
+### use the draw function to draw the object.
 
-## Examples:
+### Examples:
 
 ```c#
 Circle(20, 30, 5) myCircle;
@@ -74,4 +74,21 @@ while(true){
 }
 ```
 
+## Function declration in Layan:
+
+```c#
+setPenSize(0.005);
+setScale(0 , 100);
+setColor("blue");
+
+function CircleSquare(float xPosition, float yPosition, float halfWidth){
+  Square square(xPosition, yPosition, halfWidth);
+  square.draw();
+
+  Circle circle(xPosition, yPosition, halfWidth);
+  circle.draw();
+}
+
+CircleSquare(50, 50, 10);
+```
 
