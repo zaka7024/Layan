@@ -1,4 +1,5 @@
-This project is for a graphic language called 'Layan' (Under Development).
+# [discontinued]
+This project is for a graphic language called 'Layan'.
 - project name: 'Layan'.
 - name asset: arabic language.
 - tools: java
