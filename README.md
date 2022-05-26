@@ -1,14 +1,31 @@
-# [discontinued]
-This project is for a graphic language called 'Layan'.
-- project name: 'Layan'.
-- name asset: arabic language.
-- tools: java
-- start date: 18/8/2019
-- goal: with layan you can draw and write on a 2d plane with a simple syntax.
+# interpreter for Layan
 
-# Hot to use layan
-### Variables declration.
-## There is a four data type in this language (string, int, float, bool).
+#### with layan you can draw on a 2d plane with a simple syntax.
+
+## Examples
+
+```c#
+int canvasWidth = 100;
+
+setPenSize(0.05);
+setScale(0 , canvasWidth);
+setColor("blue");
+
+while(true) {
+    for(int i = 0; i < canvasWidth; i = i + 1) {
+        Point a(i, 50);
+        a.draw();
+        wait(10);
+        clear();
+    }
+}
+```
+
+![Alt Text](./examples/example-1.mp4)
+
+## Hot to use layan
+### Variables declaration.
+#### There is a four data type in language (string, int, float, bool).
 
 ```c#
 string name = "layan";
@@ -41,8 +58,8 @@ for(int i = 0; i <= 10; i = i + 1){
 }
 ```
 
-## Built-in drawable classes:
-### Layan has a built-in drawable class to draw a primitive object such as circle and square.
+### Built-in drawable classes:
+#### Layan has a built-in drawable class to draw a primitive object such as circle and square.
 
 * Circle(x, y, radius);
 * Square(x, y, halfWidth);
@@ -75,7 +92,7 @@ while(true){
 }
 ```
 
-## Function declration in Layan:
+## Function declaration in Layan:
 
 ```c#
 setPenSize(0.005);

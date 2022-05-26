@@ -7,9 +7,10 @@ import Lexer.Lexer;
 import Parser.Parser;
 import Tokens.Token;
 import Tokens.Tokens;
-import edu.princeton.cs.algs4.StdDraw;
 
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class Main {
 
@@ -20,16 +21,18 @@ public class Main {
         String temp = "";
         try {
             fileReader = new FileReader
-                    ("G:\\old\\IdeaProjects\\Layan\\src\\main\\java\\LayanStdLib.layan");
+                    ("src/main/java/LayanStdLib.layan");
             bufferedReader = new BufferedReader(fileReader);
             while ((temp = bufferedReader.readLine()) != null)
                 stringBuilder.append(temp);
 
             fileReader = new FileReader
-                    ("G:\\old\\IdeaProjects\\Layan\\src\\main\\java\\code.txt");
+                    ("C:\\Users\\ADMIN\\IdeaProjects\\Layan\\src\\main\\java\\code.txt");
             bufferedReader = new BufferedReader(fileReader);
             while ((temp = bufferedReader.readLine()) != null)
                 stringBuilder.append(temp);
+
+            System.out.println(Arrays.toString(args));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
