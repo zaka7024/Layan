@@ -21,7 +21,50 @@ while(true) {
 }
 ```
 
-![Alt Text](./examples/example-1.mp4)
+---
+
+![](./examples/ezgif-4-da9c757114.gif)
+
+```c#
+setPenSize(0.05);
+setScale(0 , 100);
+setColor("blue");
+
+while(true){
+    FilledCircle randomCircle(RAND * 100, RAND * 100, RAND * 10);
+    randomCircle.draw();
+    setRandomColor();
+    wait(10);
+}
+```
+
+![](./examples/ezgif-4-3c06ee29de.gif)
+
+---
+```c#
+int canvasWidth = 60;
+setPenSize(0.005);
+setScale(0 , canvasWidth);
+while(true){
+    setRandomColor();
+    for(int i = 0; i < canvasWidth; i = i + 1) {
+        Circle c(i, i, i);
+        c.draw();
+        wait(10);
+    }
+
+    setRandomColor();
+    for(int i = canvasWidth - 1; i >= 0; i = i - 1) {
+        Circle c(i, i, i);
+        c.draw();
+        wait(10);
+    }
+}
+```
+
+![](./examples/ezgif-4-e0c993a625.gif)
+
+---
 
 ## Hot to use layan
 ### Variables declaration.
@@ -92,7 +135,7 @@ while(true){
 }
 ```
 
-## Function declaration in Layan:
+### Function declaration in Layan:
 
 ```c#
 setPenSize(0.005);

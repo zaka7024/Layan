@@ -1,4 +1,5 @@
 
+/*
 int canvasWidth = 100;
 
 setPenSize(0.05);
@@ -13,6 +14,7 @@ while(true) {
         clear();
     }
 }
+*/
 
 /*
 int canvasWidth = 100;
@@ -40,11 +42,28 @@ setScale(0 , 100);
 setColor("blue");
 
 while(true){
-    FilledCircle google(RAND * 100, RAND * 100, RAND * 10);
-
-    google.draw();
+    FilledCircle randomCircle(RAND * 100, RAND * 100, RAND * 10);
+    randomCircle.draw();
     setRandomColor();
-    /*wait(20);*/
-
+    wait(10);
 }
+
 */
+int canvasWidth = 60;
+setPenSize(0.005);
+setScale(0 , canvasWidth);
+while(true){
+    setRandomColor();
+    for(int i = 0; i < canvasWidth; i = i + 1) {
+        Circle c(i, i, i);
+        c.draw();
+        wait(10);
+    }
+
+    setRandomColor();
+    for(int i = canvasWidth - 1; i >= 0; i = i - 1) {
+        Circle c(i, i, i);
+        c.draw();
+        wait(10);
+    }
+}
